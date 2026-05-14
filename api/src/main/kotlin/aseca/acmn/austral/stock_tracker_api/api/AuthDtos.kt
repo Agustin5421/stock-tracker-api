@@ -9,3 +9,5 @@ data class RegisterResponse(val id: String)
 data class AuthResponse(val token: String)
 
 data class ErrorResponse(val error: String)
+
+data class UserResponse(val id: String, val email: String)
