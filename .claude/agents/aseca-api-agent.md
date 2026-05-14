@@ -18,6 +18,8 @@ infrastructure/   # JPA, external HTTP clients, Spring config, Flyway migrations
 
 ## Design Principles
 
+**TDD as a design tool** — write the test first. Not to verify, but to think through the design bottom-up. The test forces you to define the interface before the implementation, producing cleaner, more decoupled code.
+
 **Cohesion / rule of belonging** — if you can remove a property from an object and it still represents the same concept, that property doesn't belong there. Example: removing `price` from `Product` still leaves a valid `Product` — so price belongs in a `Catalog`, not in `Product`.
 
 **Immutability by default** — objects do not mutate unless mutation is their essence. No setters. If state needs to change, produce a new object.
