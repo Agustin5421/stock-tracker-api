@@ -1,4 +1,4 @@
-package aseca.acmn.austral.stock_tracker_api
+package aseca.acmn.austral.stock_tracker_api.integration
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection

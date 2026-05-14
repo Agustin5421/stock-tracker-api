@@ -37,8 +37,28 @@ Never use mock frameworks. Isolation is achieved through the principles above:
 1. **Write explicit simulator classes** — hand-write small classes that implement the relevant interface for a specific scenario. Name them descriptively (e.g. `FixedPriceService`, `InMemoryPortfolioRepository`, `PriceServiceThrowingTimeout`). Place them in `src/test/`.
 2. **Inject via constructor** — pass the simulator into the class under test. No reflection, no magic.
 
+**Test folder structure** — two folders inside `src/test/`, each mirroring the main package structure:
+```
+src/test/kotlin/.../
+  unit/
+    domain/        ← value object and domain service tests
+    application/   ← use case tests + simulators (InMemoryX, FixedX)
+  integration/     ← full app + real DB via Testcontainers
+```
+Run all tests with `./gradlew test`.
+
+**Test naming** — camelCase, describes the behavior under test. No backtick strings.
+```kotlin
+// correct
+fun registerWithDuplicateEmailThrows()
+fun loginAfterRegisterReturns200()
+
+// wrong
+fun `register with duplicate email throws`()
+```
+
 - **Unit tests**: domain/application logic in isolation using simulators.
-- **Integration tests**: real in-memory database — never mock persistence.
+- **Integration tests**: full app + real DB — never mock persistence.
 - **One assert per test** — split the test if more are needed.
 
 ## Other Rules
