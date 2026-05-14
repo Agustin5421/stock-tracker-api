@@ -39,9 +39,6 @@ infrastructure/       # Driven adapters — JPA persistence, external HTTP clien
 - **No business logic in DTOs** — they are data carriers only.
 - **Logic belongs in services** (application/domain), not in controllers.
 - **Never modify an existing Flyway migration** — always add a new one.
-- **SEC EDGAR rate limit: 10 req/s** — batch jobs must enforce this.
-- **P&L uses average cost basis.**
-- Security is currently permissive (all routes open, CSRF disabled) — auth is pending.
 
 ## Testing
 
