@@ -1,12 +1,22 @@
-# Acceso de Usuarios
+# US-001 - Crear cuenta de usuario
+**Como** inversor,
+**quiero** crear una cuenta con mail y contraseña,
+**para** poder iniciar sesión y utilizar la aplicación. 
 
-**Como** inversor  
-**Quiero** acceder a una cuenta personal  
-**Para** mantener mi información persistente y privada dentro del sistema
+## Criterios de aceptación
+- El usuario puede ingresar mail y contraseña.
+- El sistema valida que el mail tenga un formato válido.
+- El sistema valida que la contraseña no esté vacía.
+- El sistema no permite registrar dos cuentas con el mismo mail.
+- Al crear la cuenta correctamente, el usuario puede iniciar sesión.
 
-## Criterios de Aceptación
+# US-002 - Iniciar sesión
+**Como** inversor,
+**quiero** iniciar sesión con mis credenciales,
+**para** acceder a las funcionalidades protegidas de la aplicación. 
 
-- Un nuevo usuario puede registrarse con un correo electrónico válido y una contraseña segura
-- Un usuario registrado puede iniciar sesión con credenciales válidas
-- Las credenciales inválidas son rechazadas con un mensaje de error
-- La información del usuario persiste entre sesiones al cerrar y volver a iniciar sesión
+## Criterios de aceptación
+- El usuario puede ingresar mail y contraseña.
+- El sistema permite el acceso si las credenciales son válidas.
+- El sistema rechaza el acceso si las credenciales son inválidas.
+- El usuario autenticado puede acceder a las funcionalidades protegidas.

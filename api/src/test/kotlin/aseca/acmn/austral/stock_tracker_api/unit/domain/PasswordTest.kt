@@ -11,32 +11,32 @@ class PasswordTest {
 
     @Test
     fun passwordShorterThan8CharactersThrows() {
-        assertThrows<IllegalArgumentException> { Password.validate("Ab1!567") }
+        assertThrows<IllegalArgumentException> { Password.validateStrength("Ab1!567") }
     }
 
     @Test
     fun passwordWithoutUppercaseThrows() {
-        assertThrows<IllegalArgumentException> { Password.validate("ab1!5678") }
+        assertThrows<IllegalArgumentException> { Password.validateStrength("ab1!5678") }
     }
 
     @Test
     fun passwordWithoutLowercaseThrows() {
-        assertThrows<IllegalArgumentException> { Password.validate("AB1!5678") }
+        assertThrows<IllegalArgumentException> { Password.validateStrength("AB1!5678") }
     }
 
     @Test
     fun passwordWithoutDigitThrows() {
-        assertThrows<IllegalArgumentException> { Password.validate("Abcd!efg") }
+        assertThrows<IllegalArgumentException> { Password.validateStrength("Abcd!efg") }
     }
 
     @Test
     fun passwordWithoutSpecialCharacterThrows() {
-        assertThrows<IllegalArgumentException> { Password.validate("Abcd1234") }
+        assertThrows<IllegalArgumentException> { Password.validateStrength("Abcd1234") }
     }
 
     @Test
     fun validPasswordDoesNotThrow() {
-        Password.validate("ValidP@ss1")
+        Password.validateStrength("ValidP@ss1")
     }
 
     @Test

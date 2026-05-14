@@ -11,7 +11,7 @@ class RegisterUserService(
 ) : RegisterUserUseCase {
 
     override fun register(email: String, plainPassword: String): UUID {
-        Password.validate(plainPassword)
+        Password.validateStrength(plainPassword)
         val domainEmail = Email(email)
         require(!userRepository.existsByEmail(domainEmail)) { "Email already registered: $email" }
         val user = User(

@@ -3,7 +3,7 @@ package aseca.acmn.austral.stock_tracker_api.domain
 class Password private constructor(val hash: String) {
 
     companion object {
-        fun validate(plain: String) {
+        fun validateStrength(plain: String) {
             require(plain.length >= 8) { "Password must be at least 8 characters" }
             require(plain.any { it.isUpperCase() }) { "Password must contain an uppercase letter" }
             require(plain.any { it.isLowerCase() }) { "Password must contain a lowercase letter" }
