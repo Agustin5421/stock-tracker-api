@@ -112,6 +112,8 @@ jobs:
 
       - name: Build web
         working-directory: web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080
         run: |
           pnpm install --frozen-lockfile
           pnpm build
