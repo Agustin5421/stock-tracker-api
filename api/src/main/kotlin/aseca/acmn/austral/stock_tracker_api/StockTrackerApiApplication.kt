@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class StockTrackerApiApplication
 
 fun main(args: Array<String>) {
-	runApplication<StockTrackerApiApplication>(*args)
+    runApplication<StockTrackerApiApplication>(*args)
 }

@@ -12,10 +12,11 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class AuthConfig {
-
     @Bean
-    fun registerUserUseCase(userRepository: UserRepository, passwordHasher: PasswordHasher): RegisterUserUseCase =
-        RegisterUserService(userRepository, passwordHasher)
+    fun registerUserUseCase(
+        userRepository: UserRepository,
+        passwordHasher: PasswordHasher,
+    ): RegisterUserUseCase = RegisterUserService(userRepository, passwordHasher)
 
     @Bean
     fun loginUseCase(

@@ -20,20 +20,20 @@ class SecurityConfig {
     fun filterChain(
         http: HttpSecurity,
         jwtAuthenticationFilter: JwtAuthenticationFilter,
-    ): SecurityFilterChain {
-        return http
+    ): SecurityFilterChain =
+        http
             .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/auth/**", "/test/**", "/actuator/**").permitAll()
-                    .anyRequest().authenticated()
-            }
-            .csrf { it.disable() }
+                    .requestMatchers("/auth/**", "/test/**", "/actuator/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated()
+            }.csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .exceptionHandling { it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
-    }
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {

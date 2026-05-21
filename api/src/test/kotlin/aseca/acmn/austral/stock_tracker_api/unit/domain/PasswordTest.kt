@@ -1,14 +1,12 @@
 package aseca.acmn.austral.stock_tracker_api.unit.domain
 
 import aseca.acmn.austral.stock_tracker_api.domain.Password
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class PasswordTest {
-
     @Test
     fun passwordShorterThan8CharactersThrows() {
         assertThrows<IllegalArgumentException> { Password.validateStrength("Ab1!567") }

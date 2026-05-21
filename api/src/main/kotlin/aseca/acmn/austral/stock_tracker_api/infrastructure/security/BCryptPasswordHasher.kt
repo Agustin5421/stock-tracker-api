@@ -9,5 +9,9 @@ class BCryptPasswordHasher : PasswordHasher {
     private val encoder = BCryptPasswordEncoder()
 
     override fun hash(plain: String): String = encoder.encode(plain) ?: error("BCrypt returned null")
-    override fun matches(plain: String, hash: String): Boolean = encoder.matches(plain, hash)
+
+    override fun matches(
+        plain: String,
+        hash: String,
+    ): Boolean = encoder.matches(plain, hash)
 }

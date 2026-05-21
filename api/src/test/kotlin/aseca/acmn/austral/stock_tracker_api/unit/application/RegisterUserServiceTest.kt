@@ -1,14 +1,11 @@
 package aseca.acmn.austral.stock_tracker_api.unit.application
 
 import aseca.acmn.austral.stock_tracker_api.application.RegisterUserService
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class RegisterUserServiceTest {
-
     private fun service() = RegisterUserService(InMemoryUserRepository(), FakePasswordHasher())
 
     @Test

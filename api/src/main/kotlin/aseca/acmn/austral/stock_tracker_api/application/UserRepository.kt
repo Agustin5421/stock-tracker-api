@@ -6,6 +6,8 @@ import aseca.acmn.austral.stock_tracker_api.domain.User
 /** Port out — persistence contract for User aggregates. */
 interface UserRepository {
     fun save(user: User): User
+
     fun findByEmail(email: Email): User?
+
     fun existsByEmail(email: Email): Boolean
 }

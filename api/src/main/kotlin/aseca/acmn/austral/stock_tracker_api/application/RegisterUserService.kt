@@ -9,16 +9,19 @@ class RegisterUserService(
     private val userRepository: UserRepository,
     private val passwordHasher: PasswordHasher,
 ) : RegisterUserUseCase {
-
-    override fun register(email: String, plainPassword: String): UUID {
+    override fun register(
+        email: String,
+        plainPassword: String,
+    ): UUID {
         Password.validateStrength(plainPassword)
         val domainEmail = Email(email)
         require(!userRepository.existsByEmail(domainEmail)) { "Email already registered: $email" }
-        val user = User(
-            id = UUID.randomUUID(),
-            email = domainEmail,
-            password = Password.fromHash(passwordHasher.hash(plainPassword)),
-        )
+        val user =
+            User(
+                id = UUID.randomUUID(),
+                email = domainEmail,
+                password = Password.fromHash(passwordHasher.hash(plainPassword)),
+            )
         return userRepository.save(user).id
     }
 }

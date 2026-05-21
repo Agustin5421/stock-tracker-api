@@ -5,5 +5,6 @@ import java.util.UUID
 
 interface SpringDataUserRepository : JpaRepository<UserEntity, UUID> {
     fun findByEmail(email: String): UserEntity?
+
     fun existsByEmail(email: String): Boolean
 }

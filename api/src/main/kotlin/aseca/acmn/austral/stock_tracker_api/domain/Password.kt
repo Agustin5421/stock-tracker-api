@@ -1,7 +1,8 @@
 package aseca.acmn.austral.stock_tracker_api.domain
 
-class Password private constructor(val hash: String) {
-
+class Password private constructor(
+    val hash: String,
+) {
     companion object {
         fun validateStrength(plain: String) {
             require(plain.length >= 8) { "Password must be at least 8 characters" }
@@ -15,5 +16,6 @@ class Password private constructor(val hash: String) {
     }
 
     override fun equals(other: Any?): Boolean = other is Password && hash == other.hash
+
     override fun hashCode(): Int = hash.hashCode()
 }

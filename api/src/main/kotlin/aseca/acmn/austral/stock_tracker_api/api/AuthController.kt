@@ -15,24 +15,25 @@ class AuthController(
     private val registerUserUseCase: RegisterUserUseCase,
     private val loginUseCase: LoginUseCase,
 ) {
-
     @PostMapping("/register")
-    fun register(@RequestBody request: RegisterRequest): ResponseEntity<*> {
-        return try {
+    fun register(
+        @RequestBody request: RegisterRequest,
+    ): ResponseEntity<*> =
+        try {
             val id = registerUserUseCase.register(request.email, request.password)
             ResponseEntity.status(HttpStatus.CREATED).body(RegisterResponse(id.toString()))
         } catch (e: IllegalArgumentException) {
             ResponseEntity.badRequest().body(ErrorResponse(e.message ?: "Invalid request"))
         }
-    }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): ResponseEntity<*> {
-        return try {
+    fun login(
+        @RequestBody request: LoginRequest,
+    ): ResponseEntity<*> =
+        try {
             val token = loginUseCase.login(request.email, request.password)
             ResponseEntity.ok(AuthResponse(token))
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse(e.message ?: "Invalid credentials"))
         }
-    }
 }

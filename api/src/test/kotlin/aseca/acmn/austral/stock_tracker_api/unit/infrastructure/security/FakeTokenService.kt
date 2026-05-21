@@ -10,7 +10,10 @@ class FakeTokenService(
     private val validToken: String,
     private val claims: TokenClaims,
 ) : TokenService {
-    override fun generate(userId: UUID, email: String): String = validToken
+    override fun generate(
+        userId: UUID,
+        email: String,
+    ): String = validToken
 
     override fun verify(token: String): TokenClaims {
         if (token != validToken) throw InvalidTokenException("Invalid token")

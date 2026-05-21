@@ -9,13 +9,9 @@ import org.springframework.stereotype.Repository
 class JpaUserRepository(
     private val springData: SpringDataUserRepository,
 ) : UserRepository {
+    override fun save(user: User): User = springData.save(UserEntity.fromDomain(user)).toDomain()
 
-    override fun save(user: User): User =
-        springData.save(UserEntity.fromDomain(user)).toDomain()
+    override fun findByEmail(email: Email): User? = springData.findByEmail(email.value)?.toDomain()
 
-    override fun findByEmail(email: Email): User? =
-        springData.findByEmail(email.value)?.toDomain()
-
-    override fun existsByEmail(email: Email): Boolean =
-        springData.existsByEmail(email.value)
+    override fun existsByEmail(email: Email): Boolean = springData.existsByEmail(email.value)
 }

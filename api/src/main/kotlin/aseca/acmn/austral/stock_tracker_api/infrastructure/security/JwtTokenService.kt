@@ -16,14 +16,17 @@ class JwtTokenService(
     @Value("\${jwt.secret}") private val secret: String,
     @Value("\${jwt.expiration-ms:86400000}") private val expirationMs: Long,
 ) : TokenService {
-
     private val signingKey by lazy {
         Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8))
     }
 
-    override fun generate(userId: UUID, email: String): String {
+    override fun generate(
+        userId: UUID,
+        email: String,
+    ): String {
         val now = Date()
-        return Jwts.builder()
+        return Jwts
+            .builder()
             .subject(userId.toString())
             .claim("email", email)
             .issuedAt(now)
@@ -34,14 +37,17 @@ class JwtTokenService(
 
     override fun verify(token: String): TokenClaims {
         try {
-            val claims = Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .payload
+            val claims =
+                Jwts
+                    .parser()
+                    .verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .payload
             val userId = UUID.fromString(claims.subject)
-            val email = claims["email"] as? String
-                ?: throw InvalidTokenException("Token missing email claim")
+            val email =
+                claims["email"] as? String
+                    ?: throw InvalidTokenException("Token missing email claim")
             return TokenClaims(userId, email)
         } catch (e: JwtException) {
             throw InvalidTokenException("Invalid token", e)

@@ -14,14 +14,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class JwtAuthenticationFilterTest {
-
     private val userId = UUID.randomUUID()
     private val email = "user@example.com"
     private val validToken = "valid-token"
     private val claims = TokenClaims(userId, email)
 
-    private fun newFilter(): JwtAuthenticationFilter =
-        JwtAuthenticationFilter(FakeTokenService(validToken, claims))
+    private fun newFilter(): JwtAuthenticationFilter = JwtAuthenticationFilter(FakeTokenService(validToken, claims))
 
     @AfterEach
     fun clearContext() {
@@ -30,9 +28,10 @@ class JwtAuthenticationFilterTest {
 
     @Test
     fun filterPopulatesContextWhenTokenIsValid() {
-        val request = MockHttpServletRequest().apply {
-            addHeader("Authorization", "Bearer $validToken")
-        }
+        val request =
+            MockHttpServletRequest().apply {
+                addHeader("Authorization", "Bearer $validToken")
+            }
         newFilter().doFilter(request, MockHttpServletResponse(), MockFilterChain())
         val principal = SecurityContextHolder.getContext().authentication?.principal as? AuthenticatedUser
         assertEquals(AuthenticatedUser(userId, email), principal)
@@ -46,9 +45,10 @@ class JwtAuthenticationFilterTest {
 
     @Test
     fun filterDoesNotPopulateContextWhenVerifyThrows() {
-        val request = MockHttpServletRequest().apply {
-            addHeader("Authorization", "Bearer not-the-valid-token")
-        }
+        val request =
+            MockHttpServletRequest().apply {
+                addHeader("Authorization", "Bearer not-the-valid-token")
+            }
         newFilter().doFilter(request, MockHttpServletResponse(), MockFilterChain())
         assertNull(SecurityContextHolder.getContext().authentication)
     }

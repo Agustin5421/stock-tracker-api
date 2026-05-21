@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/users")
 class UserController {
-
     @GetMapping("/current")
-    fun getCurrentUser(@AuthenticationPrincipal principal: AuthenticatedUser): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok(UserResponse(principal.id.toString(), principal.email))
-    }
+    fun getCurrentUser(
+        @AuthenticationPrincipal principal: AuthenticatedUser,
+    ): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse(principal.id.toString(), principal.email))
 }

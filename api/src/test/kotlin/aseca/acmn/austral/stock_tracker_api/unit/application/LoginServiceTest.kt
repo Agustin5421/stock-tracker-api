@@ -2,14 +2,12 @@ package aseca.acmn.austral.stock_tracker_api.unit.application
 
 import aseca.acmn.austral.stock_tracker_api.application.LoginService
 import aseca.acmn.austral.stock_tracker_api.application.RegisterUserService
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class LoginServiceTest {
-
     private fun setup(): LoginService {
         val repo = InMemoryUserRepository()
         val hasher = FakePasswordHasher()

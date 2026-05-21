@@ -6,5 +6,8 @@ interface LoginUseCase {
      * Validates credentials and returns a signed JWT.
      * Throws [IllegalArgumentException] when credentials are invalid.
      */
-    fun login(email: String, plainPassword: String): String
+    fun login(
+        email: String,
+        plainPassword: String,
+    ): String
 }

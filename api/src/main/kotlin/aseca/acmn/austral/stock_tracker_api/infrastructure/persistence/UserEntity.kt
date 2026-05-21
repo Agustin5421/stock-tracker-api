@@ -14,29 +14,28 @@ import java.util.UUID
 @Entity
 @Table(name = "users")
 class UserEntity(
-
     @Id
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "id", length = 36, nullable = false, updatable = false)
     val id: UUID,
-
     @Column(name = "email", nullable = false, unique = true, length = 255)
     val email: String,
-
     @Column(name = "password_hash", nullable = false, length = 255)
     val passwordHash: String,
 ) {
-    fun toDomain(): User = User(
-        id = id,
-        email = Email(email),
-        password = Password.fromHash(passwordHash),
-    )
+    fun toDomain(): User =
+        User(
+            id = id,
+            email = Email(email),
+            password = Password.fromHash(passwordHash),
+        )
 
     companion object {
-        fun fromDomain(user: User): UserEntity = UserEntity(
-            id = user.id,
-            email = user.email.value,
-            passwordHash = user.password.hash,
-        )
+        fun fromDomain(user: User): UserEntity =
+            UserEntity(
+                id = user.id,
+                email = user.email.value,
+                passwordHash = user.password.hash,
+            )
     }
 }

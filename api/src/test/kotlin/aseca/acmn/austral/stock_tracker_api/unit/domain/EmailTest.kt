@@ -1,13 +1,11 @@
 package aseca.acmn.austral.stock_tracker_api.unit.domain
 
 import aseca.acmn.austral.stock_tracker_api.domain.Email
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class EmailTest {
-
     @Test
     fun validEmailIsAccepted() {
         val email = Email("user@example.com")

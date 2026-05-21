@@ -7,11 +7,14 @@ class LoginService(
     private val tokenService: TokenService,
     private val passwordHasher: PasswordHasher,
 ) : LoginUseCase {
-
-    override fun login(email: String, plainPassword: String): String {
+    override fun login(
+        email: String,
+        plainPassword: String,
+    ): String {
         val domainEmail = Email(email)
-        val user = userRepository.findByEmail(domainEmail)
-            ?: throw IllegalArgumentException("Invalid credentials")
+        val user =
+            userRepository.findByEmail(domainEmail)
+                ?: throw IllegalArgumentException("Invalid credentials")
         require(passwordHasher.matches(plainPassword, user.password.hash)) { "Invalid credentials" }
         return tokenService.generate(user.id, user.email.value)
     }
