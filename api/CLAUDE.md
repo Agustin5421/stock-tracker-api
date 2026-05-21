@@ -9,7 +9,7 @@ Serves the web app and the Capacitor mobile app.
 
 ```bash
 docker compose up --build -d    # start MySQL (3307) + API (8080)
-docker compose up -d db         # start MySQL only (for host-based bootRun)
+docker compose up -d stock-tracker-db   # start MySQL only (for host-based bootRun)
 docker compose down             # stop containers
 ./gradlew bootRun               # run on host (defaults to localhost:3307)
 ./gradlew test                  # run all tests (unit + integration)

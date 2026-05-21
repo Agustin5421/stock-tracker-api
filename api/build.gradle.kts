@@ -78,5 +78,7 @@ tasks.withType<Test> {
 tasks.register<Test>("unitTest") {
     description = "Runs only unit tests (excludes integration tests)."
     group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
     include("**/unit/**")
 }

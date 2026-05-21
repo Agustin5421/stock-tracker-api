@@ -11,14 +11,15 @@ The mobile app will be built with Capacitor (Ionic), wrapping the web app.
 ## Repository Layout
 
 ```
-api/       # Spring Boot backend
-web/       # Next.js frontend
+api/       # Spring Boot backend  → see api/CLAUDE.md
+web/       # Next.js frontend     → see web/CLAUDE.md
 e2e/web/   # Cypress end-to-end tests
 e2e/load/  # Locust load tests
 docs/      # Feature specs, user stories, and Gherkin scenarios
 ```
 
 Before implementing a feature, check `docs/` for its spec and acceptance criteria.
+Each subdirectory has its own `CLAUDE.md` with commands, architecture, and conventions specific to that layer.
 
 ## Monorepo Structure
 
