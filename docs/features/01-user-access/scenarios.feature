@@ -24,3 +24,9 @@ Funcionalidad: Acceso de Usuarios
     Dado que un usuario ha iniciado sesión y tiene datos guardados
     Cuando cierra la sesión y vuelve a iniciar sesión luego
     Entonces su información de usuario sigue disponible
+
+  Escenario: Cierre de sesión
+    Dado que un usuario ha iniciado sesión
+    Cuando cierra la sesión
+    Entonces el sistema lo redirige a la pantalla de inicio de sesión
+    Y no puede acceder a pantallas protegidas sin volver a autenticarse

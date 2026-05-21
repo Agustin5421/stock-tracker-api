@@ -20,3 +20,13 @@
 - El sistema permite el acceso si las credenciales son válidas.
 - El sistema rechaza el acceso si las credenciales son inválidas.
 - El usuario autenticado puede acceder a las funcionalidades protegidas.
+
+# US-003 - Cerrar sesión
+**Como** inversor,
+**quiero** cerrar mi sesión,
+**para** evitar que otra persona acceda a mi información desde el mismo dispositivo.
+
+## Criterios de aceptación
+- El usuario autenticado puede cerrar sesión.
+- Luego de cerrar sesión, el usuario no puede acceder a pantallas protegidas.
+- El sistema permite volver a iniciar sesión luego del cierre.

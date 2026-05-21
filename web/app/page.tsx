@@ -1,16 +1,80 @@
-export default function Home() {
+'use client'
+
+import { useEffect, useState } from 'react'
+
+import { getToken } from '@/lib/api'
+import { navigate, type Route } from '@/lib/routing'
+import { LoginView } from '@/components/auth/login-view'
+import { RegisterView } from '@/components/auth/register-view'
+import { HomeView } from '@/components/home/home-view'
+
+export default function RootPage() {
+  const [route, setRoute] = useState<Route>('login')
+  const [successMessage, setSuccessMessage] = useState<string | undefined>()
+
+  // Read initial hash and listen for changes
+  useEffect(() => {
+    function syncRoute() {
+      const hash = window.location.hash
+
+      // Detect post-registration redirect: #/login?registered=1
+      if (hash.startsWith('#/login')) {
+        if (hash.includes('registered=1')) {
+          setSuccessMessage('Cuenta creada exitosamente. Ya podes iniciar sesion.')
+          // Clean up the flag without triggering another hashchange
+          window.history.replaceState(null, '', '#/login')
+        } else {
+          setSuccessMessage(undefined)
+        }
+        setRoute('login')
+        return
+      }
+
+      if (hash === '#/register') {
+        setSuccessMessage(undefined)
+        setRoute('register')
+        return
+      }
+
+      if (hash === '#/home') {
+        // Guard: redirect to login if no token
+        if (!getToken()) {
+          navigate('login')
+          return
+        }
+        setRoute('home')
+        return
+      }
+
+      // Default: go to login (or home if already authenticated)
+      if (getToken()) {
+        navigate('home')
+      } else {
+        setRoute('login')
+      }
+    }
+
+    syncRoute()
+    window.addEventListener('hashchange', syncRoute)
+    return () => window.removeEventListener('hashchange', syncRoute)
+  }, [])
+
+  if (route === 'home') {
+    return <HomeView />
+  }
+
+  if (route === 'register') {
+    return (
+      <RegisterView
+        onNavigateLogin={() => navigate('login')}
+      />
+    )
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans">
-      <main className="flex w-full max-w-3xl flex-col items-center gap-8 px-6 py-16 text-center sm:items-start sm:text-left">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold tracking-tight">
-            init
-          </h1>
-          <p className="max-w-md text-lg text-muted-foreground">
-            To get started, send a prompt or modify this page directly.
-          </p>
-        </div>
-      </main>
-    </div>
-  );
+    <LoginView
+      onNavigateRegister={() => navigate('register')}
+      successMessage={successMessage}
+    />
+  )
 }
