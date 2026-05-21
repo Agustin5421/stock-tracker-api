@@ -1,23 +1,15 @@
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Portfolio Tracker - US Stock Investment Tracker',
-  description: 'Track your US stock portfolio with real-time prices, P&L analysis, and financial data. Built for Universidad Austral ACS 2026.',
-  generator: 'v0.app',
-  applicationName: 'Portfolio Tracker',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'Portfolio',
-  },
+  title: 'Portfolio Tracker',
+  description: 'Track your US stock portfolio',
+  generator: 'next',
   icons: {
     icon: [
       {
@@ -37,26 +29,14 @@ export const metadata: Metadata = {
   },
 }
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
-    { media: '(prefers-color-scheme: dark)', color: '#0f1117' },
-  ],
-  viewportFit: 'cover',
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark bg-background">
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang="en">
+      <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
