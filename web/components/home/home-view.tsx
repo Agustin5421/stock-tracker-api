@@ -23,7 +23,7 @@ export function HomeView() {
               <TrendingUp className="h-4 w-4 text-[#2d2d2d]" aria-hidden />
             </div>
             <span className="text-base font-bold text-foreground tracking-tight">
-              Portfolio Tracker
+              Kiwii - Portfolio Tracker
             </span>
           </div>
 
