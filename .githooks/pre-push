@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(git rev-parse --show-toplevel)
+remote=${1:-origin}
+range=$(git rev-list "@{u}..HEAD" 2>/dev/null || git rev-list HEAD --not --remotes="$remote")
+changed=$(git diff --name-only $range 2>/dev/null || git ls-files)
+
+if echo "$changed" | grep -q '^api/'; then
+  echo "→ Running api unit tests (./gradlew unitTest)"
+  (cd "$repo_root/api" && ./gradlew unitTest)
+fi
+
+if echo "$changed" | grep -q '^web/'; then
+  echo "→ Building web (pnpm build)"
+  (cd "$repo_root/web" && pnpm build)
+fi

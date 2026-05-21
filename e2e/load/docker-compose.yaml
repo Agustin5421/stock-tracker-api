@@ -1,0 +1,12 @@
+services:
+  portfolio-tracker-locust:
+    image: locustio/locust:2.32.6
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./:/mnt/locust
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: >
+      -f /mnt/locust/locustfile.py
+      --host http://host.docker.internal:8080

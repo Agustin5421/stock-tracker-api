@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: stock-tracker-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/stocktracker?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf8}
+    username: ${SPRING_DATASOURCE_USERNAME:stocktracker}
+    password: ${SPRING_DATASOURCE_PASSWORD:stocktracker}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  batch:
+    jdbc:
+      initialize-schema: always
+
+jwt:
+  secret: ${JWT_SECRET:change-me-in-production-must-be-at-least-32-chars}
+  expiration-ms: 86400000
