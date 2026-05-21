@@ -14,13 +14,19 @@ class FakeEdgarPortConfig {
 }
 
 class FakeEdgarPort : EdgarPort {
+    var allResults: List<CompanySearchResult> = emptyList()
     var tickerResults: Map<String, List<CompanySearchResult>> = emptyMap()
     var nameResults: Map<String, List<CompanySearchResult>> = emptyMap()
     var shouldThrow: Boolean = false
 
-    override fun searchByTicker(ticker: String): List<CompanySearchResult> {
+    override fun searchAll(): List<CompanySearchResult> {
         if (shouldThrow) throw RuntimeException("EDGAR unavailable")
-        return tickerResults[ticker] ?: emptyList()
+        return allResults
+    }
+
+    override fun searchByTicker(query: String): List<CompanySearchResult> {
+        if (shouldThrow) throw RuntimeException("EDGAR unavailable")
+        return tickerResults[query] ?: emptyList()
     }
 
     override fun searchByName(name: String): List<CompanySearchResult> {

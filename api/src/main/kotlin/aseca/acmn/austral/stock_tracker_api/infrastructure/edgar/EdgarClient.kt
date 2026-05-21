@@ -15,12 +15,20 @@ class EdgarClient(
     private val requestTimestamps = ArrayDeque<Long>()
     private val lock = Any()
 
-    override fun searchByTicker(ticker: String): List<CompanySearchResult> {
+    override fun searchAll(): List<CompanySearchResult> {
         val cache = loadTickers() ?: return emptyList()
-        val entry =
-            cache.values.firstOrNull { it.ticker.equals(ticker, ignoreCase = true) }
-                ?: return emptyList()
-        return listOf(CompanySearchResult(entry.ticker, entry.title, entry.cikStr.toString()))
+        return cache.values
+            .sortedBy { it.ticker }
+            .take(500)
+            .map { CompanySearchResult(it.ticker, it.title, it.cikStr.toString()) }
+    }
+
+    override fun searchByTicker(query: String): List<CompanySearchResult> {
+        val cache = loadTickers() ?: return emptyList()
+        return cache.values
+            .filter { it.ticker.contains(query, ignoreCase = true) }
+            .sortedBy { it.ticker }
+            .map { CompanySearchResult(it.ticker, it.title, it.cikStr.toString()) }
     }
 
     override fun searchByName(name: String): List<CompanySearchResult> {

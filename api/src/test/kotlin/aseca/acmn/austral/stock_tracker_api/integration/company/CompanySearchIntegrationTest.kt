@@ -79,10 +79,19 @@ class CompanySearchIntegrationTest {
     }
 
     @Test
-    fun missingQueryReturns200WithEmptyArray() {
+    fun blankQueryReturns200WithArray() {
         mockMvc
             .perform(get("/api/companies/search").param("q", ""))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
+    }
+
+    @Test
+    fun blankQueryReturnsAllConfiguredResults() {
+        fakeEdgar.allResults = listOf(CompanySearchResult("AAPL", "Apple Inc.", "320193"))
+
+        mockMvc
+            .perform(get("/api/companies/search").param("q", ""))
+            .andExpect(jsonPath("$[0].ticker").value("AAPL"))
     }
 }

@@ -8,13 +8,22 @@ import kotlin.test.assertTrue
 
 class SearchCompaniesServiceTest {
     private val apple = CompanySearchResult("AAPL", "Apple Inc.", "320193")
+    private val appliedMaterials = CompanySearchResult("AMAT", "Applied Materials", "796343")
 
     private fun service(fake: FakeEdgarPort = FakeEdgarPort()) = SearchCompaniesService(fake)
 
     @Test
-    fun blankQueryReturnsEmptyList() {
-        val result = service().search("   ")
-        assertTrue(result.isEmpty())
+    fun blankQueryDelegatesToSearchAll() {
+        val fake = FakeEdgarPort().apply { allResults = listOf(apple) }
+        val result = service(fake).search("   ")
+        assertEquals(listOf(apple), result)
+    }
+
+    @Test
+    fun emptyQueryDelegatesToSearchAll() {
+        val fake = FakeEdgarPort().apply { allResults = listOf(apple, appliedMaterials) }
+        val result = service(fake).search("")
+        assertEquals(listOf(apple, appliedMaterials), result)
     }
 
     @Test
@@ -32,6 +41,16 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
+    fun tickerQueryCanReturnMultipleMatches() {
+        val fake =
+            FakeEdgarPort().apply {
+                tickerResults = mapOf("AAPL" to listOf(apple, appliedMaterials))
+            }
+        val result = service(fake).search("AAPL")
+        assertEquals(2, result.size)
+    }
+
+    @Test
     fun nameQueryDelegatesToSearchByName() {
         val fake = FakeEdgarPort().apply { nameResults = mapOf("Apple Inc" to listOf(apple)) }
         val result = service(fake).search("Apple Inc")
@@ -39,9 +58,9 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
-    fun longQueryWithSpaceIsRoutedToNameSearch() {
-        val fake = FakeEdgarPort().apply { nameResults = mapOf("Apple Inc" to listOf(apple)) }
-        val result = service(fake).search("Apple Inc")
+    fun sixLetterQueryIsRoutedToNameSearch() {
+        val fake = FakeEdgarPort().apply { nameResults = mapOf("GOOGL1" to listOf(apple)) }
+        val result = service(fake).search("GOOGL1")
         assertEquals(listOf(apple), result)
     }
 
@@ -53,9 +72,9 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
-    fun sixLetterQueryIsRoutedToNameSearch() {
-        val fake = FakeEdgarPort().apply { nameResults = mapOf("GOOGL1" to listOf(apple)) }
-        val result = service(fake).search("GOOGL1")
-        assertEquals(listOf(apple), result)
+    fun edgarFailureOnBlankQueryReturnsEmptyList() {
+        val fake = FakeEdgarPort().apply { shouldThrow = true }
+        val result = service(fake).search("")
+        assertTrue(result.isEmpty())
     }
 }

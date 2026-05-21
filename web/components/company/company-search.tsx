@@ -2,48 +2,50 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import { Loader2, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2, Search } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { type CompanySearchResult, searchCompanies } from '@/lib/api'
 
-const MIN_QUERY_LENGTH = 2
 const DEBOUNCE_MS = 300
+const PAGE_SIZE = 15
 
 export function CompanySearch() {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<CompanySearchResult[] | null>(null)
+  const [results, setResults] = useState<CompanySearchResult[]>([])
   const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value
-    setQuery(value)
-    if (value.length < MIN_QUERY_LENGTH) {
-      setResults(null)
+  const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE))
+  const pageItems = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  async function fetchResults(q: string) {
+    setLoading(true)
+    try {
+      const data = await searchCompanies(q)
+      setResults(data)
+      setPage(1)
+    } catch {
+      setResults([])
+      setPage(1)
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    if (query.length < MIN_QUERY_LENGTH) return
+    fetchResults('')
+  }, [])
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    setQuery(value)
 
     if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true)
-      try {
-        const data = await searchCompanies(query)
-        setResults(data)
-      } catch {
-        setResults([])
-      } finally {
-        setLoading(false)
-      }
-    }, DEBOUNCE_MS)
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-    }
-  }, [query])
+    debounceRef.current = setTimeout(() => fetchResults(value), DEBOUNCE_MS)
+  }
 
   return (
     <div className="w-full max-w-2xl space-y-3">
@@ -68,15 +70,15 @@ export function CompanySearch() {
         )}
       </div>
 
-      {results !== null && (
-        <div data-testid="company-search-results">
-          {results.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">
-              No se encontraron resultados.
-            </p>
-          ) : (
+      <div data-testid="company-search-results">
+        {results.length === 0 && !loading ? (
+          <p className="py-4 text-center text-sm text-muted-foreground">
+            No se encontraron resultados.
+          </p>
+        ) : (
+          <>
             <ul className="space-y-2">
-              {results.map((company) => (
+              {pageItems.map((company) => (
                 <li
                   key={company.cik}
                   className="rounded-lg border border-l-4 border-l-[#d4e64d] bg-card px-4 py-3"
@@ -89,9 +91,35 @@ export function CompanySearch() {
                 </li>
               ))}
             </ul>
-          )}
-        </div>
-      )}
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Anterior
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  {page} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Siguiente
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }

@@ -17,22 +17,39 @@ describe('Busqueda de empresas', () => {
     cy.get('[data-testid="company-search-input"]').should('be.visible')
   })
 
+  it('Lista empresas por defecto al cargar', () => {
+    cy.get('[data-testid="company-search-results"]', { timeout: 10000 }).should('be.visible')
+    cy.get('[data-testid="company-search-results"] li').should('have.length.greaterThan', 0)
+  })
+
   it('Busqueda por ticker retorna resultados', () => {
     cy.get('[data-testid="company-search-input"]').type('AAPL')
-    cy.get('[data-testid="company-search-results"]', { timeout: 10000 }).should('be.visible')
-    cy.get('[data-testid="company-search-results"]').contains('AAPL')
+    cy.get('[data-testid="company-search-results"]', { timeout: 10000 }).contains('AAPL')
+  })
+
+  it('Busqueda por ticker retorna multiples coincidencias', () => {
+    cy.get('[data-testid="company-search-input"]').type('APP')
+    cy.get('[data-testid="company-search-results"] li', { timeout: 10000 }).should(
+      'have.length.greaterThan',
+      1,
+    )
   })
 
   it('Busqueda por nombre retorna resultados', () => {
     cy.get('[data-testid="company-search-input"]').type('Apple')
-    cy.get('[data-testid="company-search-results"]', { timeout: 10000 }).should('be.visible')
+    cy.get('[data-testid="company-search-results"] li', { timeout: 10000 }).should(
+      'have.length.greaterThan',
+      0,
+    )
   })
 
-  it('Limpiar busqueda oculta resultados', () => {
+  it('Limpiar busqueda restaura listado completo', () => {
     cy.get('[data-testid="company-search-input"]').type('AAPL')
-    cy.get('[data-testid="company-search-results"]', { timeout: 10000 }).should('be.visible')
     cy.get('[data-testid="company-search-input"]').clear()
-    cy.get('[data-testid="company-search-results"]').should('not.exist')
+    cy.get('[data-testid="company-search-results"] li', { timeout: 10000 }).should(
+      'have.length.greaterThan',
+      0,
+    )
   })
 
   it('Busqueda sin resultados muestra mensaje de estado vacio', () => {
