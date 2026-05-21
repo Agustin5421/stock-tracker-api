@@ -71,18 +71,12 @@ export function LoginView({
         <Card className="border-l-4 border-l-[#d4e64d]">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-semibold">Iniciar sesion</CardTitle>
-            <CardDescription>
-              Ingresa tus credenciales para acceder a tu portfolio
-            </CardDescription>
+            <CardDescription>Ingresa tus credenciales para acceder a tu portfolio</CardDescription>
           </CardHeader>
 
           <CardContent>
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-                noValidate
-              >
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
                 {/* API error */}
                 {apiError && (
                   <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5">
@@ -99,7 +93,10 @@ export function LoginView({
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+                          <Mail
+                            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                            aria-hidden
+                          />
                           <Input
                             type="email"
                             placeholder="tu@ejemplo.com"
@@ -122,7 +119,10 @@ export function LoginView({
                       <FormLabel>Contrasena</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+                          <Lock
+                            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                            aria-hidden
+                          />
                           <Input
                             type="password"
                             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"

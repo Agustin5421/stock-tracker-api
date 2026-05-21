@@ -26,12 +26,7 @@ export function HomeView() {
             </span>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            className="gap-1.5"
-          >
+          <Button variant="outline" size="sm" onClick={handleLogout} className="gap-1.5">
             <LogOut className="h-4 w-4" aria-hidden />
             <span>Cerrar sesion</span>
           </Button>
@@ -50,7 +45,8 @@ export function HomeView() {
         <div className="flex items-center gap-2 rounded-lg border border-[#d4e64d]/50 bg-[#d4e64d]/10 px-4 py-3">
           <TrendingUp className="h-4 w-4 shrink-0 text-[#c38f42]" aria-hidden />
           <p className="text-sm text-foreground">
-            La autenticacion funciona correctamente. Las funcionalidades del portfolio estaran disponibles pronto.
+            La autenticacion funciona correctamente. Las funcionalidades del portfolio estaran
+            disponibles pronto.
           </p>
         </div>
       </main>

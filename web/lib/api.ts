@@ -26,10 +26,7 @@ export interface ApiError {
 
 // ---- HTTP helper ----
 
-async function request<T>(
-  path: string,
-  options: RequestInit,
-): Promise<T> {
+async function request<T>(path: string, options: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
@@ -41,8 +38,7 @@ async function request<T>(
   const body = await res.json().catch(() => null)
 
   if (!res.ok) {
-    const message =
-      (body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`
+    const message = (body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`
     throw new Error(message)
   }
 

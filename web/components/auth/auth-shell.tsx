@@ -20,9 +20,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Centered form area */}
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
-        {children}
-      </main>
+      <main className="flex flex-1 items-center justify-center px-4 py-12">{children}</main>
 
       {/* Footer */}
       <footer className="border-t border-border py-4">

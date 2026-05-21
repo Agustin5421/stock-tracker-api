@@ -64,17 +64,10 @@ export default function RootPage() {
   }
 
   if (route === 'register') {
-    return (
-      <RegisterView
-        onNavigateLogin={() => navigate('login')}
-      />
-    )
+    return <RegisterView onNavigateLogin={() => navigate('login')} />
   }
 
   return (
-    <LoginView
-      onNavigateRegister={() => navigate('register')}
-      successMessage={successMessage}
-    />
+    <LoginView onNavigateRegister={() => navigate('register')} successMessage={successMessage} />
   )
 }
