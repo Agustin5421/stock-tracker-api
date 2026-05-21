@@ -6,6 +6,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Gradle
+.gradle/
+
 # Environment
 .env
 .env.local

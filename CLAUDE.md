@@ -29,14 +29,21 @@ Before implementing a feature, check `docs/` for its spec and acceptance criteri
 
 ## Running the Stack
 
-**API** (from `api/`):
+**API** (from `api/`) — full stack in docker:
 ```bash
 docker compose up --build -d    # starts MySQL on 3307 and API on 8080
 ```
 
+**API** (from `api/`) — db in docker, app on host:
+```bash
+docker compose up -d db         # MySQL on 3307
+./gradlew bootRun               # API on 8080, connects to localhost:3307
+```
+
 **Web** (from `web/`):
 ```bash
-npm run dev                     # dev server at http://localhost:3000
+pnpm install                    # first time only
+pnpm dev                        # dev server at http://localhost:3000
 ```
 
 **E2E tests — Cypress** (from `e2e/web/`, requires web + API running):

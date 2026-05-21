@@ -1,5 +1,5 @@
 services:
-  db:
+  stock-tracker-db:
     image: mysql:8.4
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -17,7 +17,7 @@ services:
       retries: 30
       start_period: 20s
 
-  api:
+  stock-tracker-api:
     build: .
     ports:
       - "${API_HOST_PORT}:8080"
@@ -26,7 +26,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
-      db:
+      stock-tracker-db:
         condition: service_healthy
 
 volumes:

@@ -9,12 +9,14 @@ Serves the web app and the Capacitor mobile app.
 
 ```bash
 docker compose up --build -d    # start MySQL (3307) + API (8080)
+docker compose up -d db         # start MySQL only (for host-based bootRun)
 docker compose down             # stop containers
 ./gradlew test                  # run tests
-./gradlew bootRun               # run locally (requires MySQL already running)
+./gradlew bootRun               # run on host (defaults to localhost:3307)
 ```
 
-Requires a `.env` file — copy from `.env.example`.
+The docker setup requires a `.env` file — copy from `.env.example`.
+`bootRun` works without env vars; defaults are baked into `application.yaml` and docker overrides them via env vars.
 
 ## Architecture
 
