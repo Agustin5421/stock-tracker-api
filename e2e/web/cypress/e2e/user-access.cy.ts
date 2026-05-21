@@ -1,5 +1,3 @@
-const API_URL = 'http://localhost:8080'
-
 describe('Acceso de usuarios', () => {
   it('Registro de nuevo usuario con correo y contraseña', () => {
     const email = `test_${Date.now()}@example.com`
@@ -20,7 +18,7 @@ describe('Acceso de usuarios', () => {
     const email = `test_${Date.now()}@example.com`
     const password = 'Password123!'
 
-    cy.request('POST', `${API_URL}/auth/register`, { email, password })
+    cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
 
     cy.visit('/#/login')
 
@@ -50,7 +48,7 @@ describe('Acceso de usuarios', () => {
     const email = `test_${Date.now()}@example.com`
     const password = 'Password123!'
 
-    cy.request('POST', `${API_URL}/auth/register`, { email, password })
+    cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
 
     cy.visit('/#/login')
     cy.get('input[type="email"]').type(email)
@@ -69,7 +67,7 @@ describe('Acceso de usuarios', () => {
     const email = `test_${Date.now()}@example.com`
     const password = 'Password123!'
 
-    cy.request('POST', `${API_URL}/auth/register`, { email, password })
+    cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
 
     cy.visit('/#/login')
     cy.get('input[type="email"]').type(email)

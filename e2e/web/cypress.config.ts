@@ -5,5 +5,8 @@ export default defineConfig({
     baseUrl: 'http://localhost:3000',
     specPattern: 'cypress/e2e/**/*.cy.ts',
     supportFile: false,
+    env: {
+      apiUrl: process.env.NEXT_PUBLIC_API_URL,
+    },
   },
 })
