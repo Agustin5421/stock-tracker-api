@@ -1,4 +1,8 @@
 import { defineConfig } from 'cypress'
+import { config } from 'dotenv'
+import { resolve } from 'path'
+
+config({ path: resolve(__dirname, '../../web/.env') })
 
 export default defineConfig({
   e2e: {
