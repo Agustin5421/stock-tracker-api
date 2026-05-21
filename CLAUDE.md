@@ -65,11 +65,15 @@ docker compose run --rm locust --headless -u 50 -r 5 -t 1m   # headless run
 Hooks live in `.githooks/` and are activated automatically by `pnpm install` in `web/`
 (the `prepare` script runs `git config core.hooksPath .githooks`).
 
-- **pre-commit** — lints whichever side changed: `pnpm lint` (web) and/or `./gradlew ktlintCheck` (api).
-- **pre-push** — runs `./gradlew unitTest` (api unit tests only) and/or `pnpm build` (web).
+- **pre-commit** — for the side(s) that changed:
+  - web: `pnpm lint` + `pnpm format:check`
+  - api: `./gradlew ktlintCheck`
+- **pre-push** — for the side(s) that changed:
+  - api: `./gradlew unitTest` (unit only — integration runs in CI)
+  - web: `pnpm build`
 
 GitHub Actions (`.github/workflows/ci.yml`) run on PRs and on push to `main`/`dev`:
-web-lint, web-build, api-lint, api-tests (unit + integration), and e2e-cypress.
+web-lint (eslint + prettier check), web-build, api-lint, api-tests (unit + integration), and e2e-cypress.
 
 ## Key Design Decisions
 

@@ -7,6 +7,8 @@ staged=$(git diff --cached --name-only --diff-filter=ACMR)
 if echo "$staged" | grep -q '^web/'; then
   echo "→ Linting web (pnpm lint)"
   (cd "$repo_root/web" && pnpm lint)
+  echo "→ Checking web formatting (pnpm format:check)"
+  (cd "$repo_root/web" && pnpm format:check)
 fi
 
 if echo "$staged" | grep -q '^api/'; then
