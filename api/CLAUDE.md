@@ -11,8 +11,11 @@ Serves the web app and the Capacitor mobile app.
 docker compose up --build -d    # start MySQL (3307) + API (8080)
 docker compose up -d db         # start MySQL only (for host-based bootRun)
 docker compose down             # stop containers
-./gradlew test                  # run tests
 ./gradlew bootRun               # run on host (defaults to localhost:3307)
+./gradlew test                  # run all tests (unit + integration)
+./gradlew unitTest              # run unit tests only (matches **/unit/**)
+./gradlew ktlintCheck           # lint Kotlin sources
+./gradlew ktlintFormat          # auto-fix lint issues
 ```
 
 The docker setup requires a `.env` file — copy from `.env.example`.
@@ -45,6 +48,7 @@ infrastructure/       # Driven adapters — JPA persistence, external HTTP clien
 ## Testing
 
 - **No mock frameworks** — use hand-written simulator classes (fakes/stubs) injected via constructor.
-- **Unit tests**: test domain/application logic in isolation using simulators.
-- **Integration tests**: use an **in-memory database** — never mock the persistence layer.
+- **Unit tests** live under `src/test/.../unit/` — test domain/application logic in isolation using simulators.
+- **Integration tests** live under `src/test/.../integration/` — use an in-memory H2 database (`MODE=MySQL`), never mock the persistence layer.
 - **One assert per test** — split if more are needed.
+- The pre-push git hook runs `unitTest` only; integration tests run in CI.

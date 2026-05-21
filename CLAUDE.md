@@ -36,13 +36,13 @@ docker compose up --build -d    # starts MySQL on 3307 and API on 8080
 
 **API** (from `api/`) — db in docker, app on host:
 ```bash
-docker compose up -d db         # MySQL on 3307
+docker compose up -d stock-tracker-db         # MySQL on 3307
 ./gradlew bootRun               # API on 8080, connects to localhost:3307
 ```
 
 **Web** (from `web/`):
 ```bash
-pnpm install                    # first time only
+pnpm install                    # first time only (also wires up git hooks via `prepare`)
 pnpm dev                        # dev server at http://localhost:3000
 ```
 
@@ -59,6 +59,17 @@ npx cypress run --browser chrome --headless   # headless Chrome
 docker compose up               # UI at http://localhost:8089
 docker compose run --rm locust --headless -u 50 -r 5 -t 1m   # headless run
 ```
+
+## Git Hooks & CI
+
+Hooks live in `.githooks/` and are activated automatically by `pnpm install` in `web/`
+(the `prepare` script runs `git config core.hooksPath .githooks`).
+
+- **pre-commit** — lints whichever side changed: `pnpm lint` (web) and/or `./gradlew ktlintCheck` (api).
+- **pre-push** — runs `./gradlew unitTest` (api unit tests only) and/or `pnpm build` (web).
+
+GitHub Actions (`.github/workflows/ci.yml`) run on PRs and on push to `main`/`dev`:
+web-lint, web-build, api-lint, api-tests (unit + integration), and e2e-cypress.
 
 ## Key Design Decisions
 

@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "4.0.6"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
+	id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
 }
 
 group = "aseca.acmn.austral"
@@ -66,6 +67,16 @@ allOpen {
 	annotation("jakarta.persistence.Embeddable")
 }
 
+ktlint {
+	version.set("1.5.0")
+}
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.register<Test>("unitTest") {
+	description = "Runs only unit tests (excludes integration tests)."
+	group = "verification"
+	include("**/unit/**")
 }
