@@ -42,7 +42,8 @@ export function RegisterView({ onNavigateLogin }: { onNavigateLogin: () => void 
     setIsLoading(true)
     try {
       await register({ email: values.email, password: values.password })
-      window.location.hash = '/login?registered=1'
+      window.history.pushState(null, '', '#/login?registered=1')
+      window.dispatchEvent(new HashChangeEvent('hashchange'))
     } catch (err) {
       setApiError(err instanceof Error ? err.message : 'Error al registrarse. Intenta de nuevo.')
     } finally {
