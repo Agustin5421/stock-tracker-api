@@ -2,6 +2,7 @@
 
 import { LogOut, TrendingUp } from 'lucide-react'
 
+import { CompanySearch } from '@/components/company/company-search'
 import { Button } from '@/components/ui/button'
 import { clearToken } from '@/lib/api'
 import { navigate } from '@/lib/routing'
@@ -22,7 +23,7 @@ export function HomeView() {
               <TrendingUp className="h-4 w-4 text-[#2d2d2d]" aria-hidden />
             </div>
             <span className="text-base font-bold text-foreground tracking-tight">
-              Portfolio Tracker
+              Kiwii - Portfolio Tracker
             </span>
           </div>
 
@@ -34,21 +35,15 @@ export function HomeView() {
       </header>
 
       {/* Main content */}
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center gap-6 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="space-y-2 text-center">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="space-y-1">
           <h1 className="text-2xl font-bold text-foreground">Bienvenido!</h1>
           <p className="text-sm text-muted-foreground">
-            Sesion iniciada. El dashboard de tu portfolio estara disponible pronto.
+            Busca empresas para analizar tu portfolio.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-lg border border-[#d4e64d]/50 bg-[#d4e64d]/10 px-4 py-3">
-          <TrendingUp className="h-4 w-4 shrink-0 text-[#c38f42]" aria-hidden />
-          <p className="text-sm text-foreground">
-            La autenticacion funciona correctamente. Las funcionalidades del portfolio estaran
-            disponibles pronto.
-          </p>
-        </div>
+        <CompanySearch />
       </main>
 
       {/* Footer */}

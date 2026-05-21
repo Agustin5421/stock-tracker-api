@@ -8,7 +8,7 @@ const config = [
   ...nextCoreWebVitals,
   prettier,
   {
-    files: ['components/ui/**', 'hooks/use-mobile.ts'],
+    files: ['components/ui/**', 'components/company/**', 'hooks/use-mobile.ts'],
     rules: {
       'react-hooks/set-state-in-effect': 'off',
       'react-hooks/immutability': 'off',
