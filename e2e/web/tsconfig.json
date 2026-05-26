@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES6",
     "lib": ["es6", "dom"],
-    "types": ["cypress"],
+    "types": ["cypress", "node"],
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,

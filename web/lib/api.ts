@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 // ---- DTOs ----
 
@@ -58,6 +58,20 @@ export async function login(data: LoginRequest): Promise<LoginResponse> {
   return request<LoginResponse>('/auth/login', {
     method: 'POST',
     body: JSON.stringify(data),
+  })
+}
+
+// ---- Company search ----
+
+export interface CompanySearchResult {
+  ticker: string
+  name: string
+  cik: string
+}
+
+export async function searchCompanies(q: string): Promise<CompanySearchResult[]> {
+  return request<CompanySearchResult[]>(`/api/companies/search?q=${encodeURIComponent(q)}`, {
+    method: 'GET',
   })
 }
 
