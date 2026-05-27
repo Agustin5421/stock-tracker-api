@@ -1,8 +1,8 @@
 package aseca.acmn.austral.stock_tracker_api.infrastructure.security
 
-import aseca.acmn.austral.stock_tracker_api.application.InvalidTokenException
-import aseca.acmn.austral.stock_tracker_api.application.TokenClaims
-import aseca.acmn.austral.stock_tracker_api.application.TokenService
+import aseca.acmn.austral.stock_tracker_api.application.auth.InvalidTokenException
+import aseca.acmn.austral.stock_tracker_api.application.auth.TokenClaims
+import aseca.acmn.austral.stock_tracker_api.application.auth.TokenService
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys

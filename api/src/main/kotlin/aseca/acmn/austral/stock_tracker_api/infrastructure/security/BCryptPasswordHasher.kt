@@ -1,6 +1,6 @@
 package aseca.acmn.austral.stock_tracker_api.infrastructure.security
 
-import aseca.acmn.austral.stock_tracker_api.application.PasswordHasher
+import aseca.acmn.austral.stock_tracker_api.application.auth.PasswordHasher
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 

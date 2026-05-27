@@ -1,7 +1,7 @@
 package aseca.acmn.austral.stock_tracker_api.unit.infrastructure.security
 
-import aseca.acmn.austral.stock_tracker_api.application.AuthenticatedUser
-import aseca.acmn.austral.stock_tracker_api.application.TokenClaims
+import aseca.acmn.austral.stock_tracker_api.application.auth.AuthenticatedUser
+import aseca.acmn.austral.stock_tracker_api.application.auth.TokenClaims
 import aseca.acmn.austral.stock_tracker_api.infrastructure.security.JwtAuthenticationFilter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
