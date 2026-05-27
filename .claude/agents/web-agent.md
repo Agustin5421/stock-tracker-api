@@ -612,9 +612,89 @@ const Icon = isPositive ? TrendingUp : TrendingDown
 3. Manejo de loading, error y empty states
 4. Responsive completo (mobile y desktop)
 5. Accesibilidad basica (alt, aria-labels, sr-only)
-6. Codigo limpio y comentado donde sea necesario
+6. Tests Cypress para los flujos de usuario afectados
+7. Codigo limpio y comentado donde sea necesario
 
-## 11. Que Evitar
+## 11. Testing con Cypress
+
+**Cypress como herramienta de diseno del flujo** — para features web, escribir o actualizar el test E2E antes de cerrar la implementacion. El test debe describir el comportamiento visible para el usuario, no detalles internos del componente.
+
+### Ubicacion
+
+Los tests E2E viven fuera de `web/`:
+
+```text
+e2e/web/cypress/e2e/
+  user-access.cy.ts
+  company-search.cy.ts
+  company-metrics.cy.ts
+```
+
+Agregar nuevos specs en esa carpeta, agrupados por flujo de usuario. No poner specs Cypress dentro de `web/`.
+
+### Comandos
+
+Desde `e2e/web/`:
+
+```bash
+npm run cy:run   # corre Cypress headless
+npm run cy:open  # abre Cypress interactivo
+```
+
+Para correrlos localmente deben estar levantados:
+
+- API Spring Boot en `http://localhost:8080`
+- Web app en `http://localhost:3000`
+
+La config de Cypress esta en `e2e/web/cypress.config.ts`:
+
+- `baseUrl`: `http://localhost:3000`
+- `apiUrl`: se lee desde `web/.env` usando `NEXT_PUBLIC_API_URL`
+
+### Reglas de escritura de tests
+
+- Testear flujos completos desde la UI: registro, login, busqueda, seleccion, errores, empty states.
+- Usar `cy.request` solo para setup rapido de datos, por ejemplo crear un usuario antes de probar login o dashboard.
+- Preferir selectores estables `data-testid` para elementos interactivos o resultados dinamicos.
+- No depender de clases Tailwind salvo que no haya una alternativa estable.
+- Evitar sleeps fijos (`cy.wait(1000)`). Usar assertions con timeout o esperar elementos visibles.
+- Los nombres de tests deben estar en espanol y describir comportamiento del usuario.
+- Mantener la UI en espanol tambien en las assertions (`cy.contains('Crear cuenta')`, etc.).
+- Cuando una feature cambia un flujo existente, actualizar el spec existente en vez de crear duplicados.
+- Cuando una feature agrega un flujo nuevo, crear un spec nuevo con nombre del flujo (`portfolio-management.cy.ts`, por ejemplo).
+
+### Workflow esperado
+
+1. Leer la spec/criterios de aceptacion en `docs/`.
+2. Escribir o actualizar el test Cypress que expresa el flujo esperado.
+3. Implementar la UI y la integracion con la API.
+4. Correr el spec afectado o todo Cypress.
+5. Confirmar responsive, loading/error/empty states y accesibilidad basica.
+
+### Ejemplo de patron
+
+```ts
+describe('Busqueda de empresas', () => {
+  beforeEach(() => {
+    const email = `search_${Date.now()}@example.com`
+    const password = 'Password123!'
+
+    cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
+    cy.visit('/#/login')
+    cy.get('input[type="email"]').type(email)
+    cy.get('input[type="password"]').type(password)
+    cy.contains('button[type="submit"]', 'Iniciar sesion').click()
+    cy.location('hash').should('eq', '#/home')
+  })
+
+  it('Busqueda por ticker retorna resultados', () => {
+    cy.get('[data-testid="company-search-input"]').type('AAPL')
+    cy.get('[data-testid="company-search-results"]', { timeout: 10000 }).contains('AAPL')
+  })
+})
+```
+
+## 12. Que Evitar
 
 - Gradientes y sombras grandes
 - Mas de 2 fonts
@@ -626,7 +706,7 @@ const Icon = isPositive ? TrendingUp : TrendingDown
 
 ---
 
-## 12. Checklist de Validacion
+## 13. Checklist de Validacion
 
 ### Estructura y Layout
 
@@ -697,3 +777,11 @@ const Icon = isPositive ? TrendingUp : TrendingDown
 - [ ] Sin TODO comments
 - [ ] Componentes separados en archivos propios
 - [ ] Manejo de errores en llamadas a la API
+
+### Cypress
+
+- [ ] Test E2E creado o actualizado en `e2e/web/cypress/e2e/`
+- [ ] Selectores `data-testid` agregados para elementos dinamicos importantes
+- [ ] Setup de datos hecho con `cy.request` cuando corresponde
+- [ ] Sin `cy.wait(...)` fijo
+- [ ] Spec afectado corre con `npm run cy:run`

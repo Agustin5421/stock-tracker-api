@@ -1,16 +1,26 @@
 'use client'
 
+import { useState } from 'react'
+
 import { LogOut, TrendingUp } from 'lucide-react'
 
+import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
 import { Button } from '@/components/ui/button'
-import { clearToken } from '@/lib/api'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { type CompanySearchResult, clearToken } from '@/lib/api'
 import { navigate } from '@/lib/routing'
 
 export function HomeView() {
+  const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null)
+
   function handleLogout() {
     clearToken()
     navigate('login')
+  }
+
+  function handleSelect(company: CompanySearchResult) {
+    setSelectedCompany((prev) => (prev?.cik === company.cik ? null : company))
   }
 
   return (
@@ -43,7 +53,32 @@ export function HomeView() {
           </p>
         </div>
 
-        <CompanySearch />
+        {/* Dashboard widgets */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Company search card */}
+          <Card className="border-l-4 border-l-[#d4e64d]">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-foreground">
+                Buscar Empresa
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CompanySearch selectedCik={selectedCompany?.cik ?? null} onSelect={handleSelect} />
+            </CardContent>
+          </Card>
+
+          {/* Metrics card — visible only when a company is selected */}
+          {selectedCompany && (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-muted-foreground px-1">
+                <span className="font-semibold text-foreground">{selectedCompany.ticker}</span>
+                {' — '}
+                {selectedCompany.name}
+              </p>
+              <CompanyMetrics cik={selectedCompany.cik} />
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Footer */}

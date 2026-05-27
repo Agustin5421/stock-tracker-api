@@ -1,11 +1,16 @@
 package aseca.acmn.austral.stock_tracker_api.infrastructure.edgar
 
+import aseca.acmn.austral.stock_tracker_api.application.company.CompanyNotFoundException
+import aseca.acmn.austral.stock_tracker_api.application.company.EdgarException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarPort
+import aseca.acmn.austral.stock_tracker_api.domain.company.CompanyMetrics
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanySearchResult
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpStatusCode
 import org.springframework.web.client.RestClient
+import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicReference
 
 class EdgarClient(
@@ -58,8 +63,68 @@ class EdgarClient(
                 }.distinctBy { it.cik }
                 .take(20)
         } catch (e: Exception) {
+            // log-worthy
             emptyList()
         }
+    }
+
+    override fun getMetrics(cik: String): CompanyMetrics {
+        val paddedCik = cik.padStart(10, '0')
+        throttle()
+        val facts =
+            try {
+                var notFound = false
+                val response =
+                    client
+                        .get()
+                        .uri("https://data.sec.gov/api/xbrl/companyfacts/CIK$paddedCik.json")
+                        .retrieve()
+                        .onStatus(HttpStatusCode::is4xxClientError) { _, _ -> notFound = true }
+                        .body(CompanyFactsResponse::class.java)
+                if (notFound) throw CompanyNotFoundException(cik)
+                response ?: throw EdgarException("Empty response body for CIK $cik")
+            } catch (e: CompanyNotFoundException) {
+                throw e
+            } catch (e: Exception) {
+                throw EdgarException("Failed to fetch metrics for CIK $cik", e)
+            }
+
+        val usGaap = facts.facts["us-gaap"] ?: emptyMap()
+
+        return CompanyMetrics(
+            revenue =
+                extractLong(usGaap, "RevenueFromContractWithCustomerExcludingAssessedTax")
+                    ?: extractLong(usGaap, "Revenues"),
+            netIncome = extractLong(usGaap, "NetIncomeLoss"),
+            eps = extractBigDecimal(usGaap, "EarningsPerShareBasic"),
+            totalAssets = extractLong(usGaap, "Assets"),
+            totalLiabilities = extractLong(usGaap, "Liabilities"),
+        )
+    }
+
+    private fun extractLong(
+        usGaap: Map<String, ConceptEntry>,
+        concept: String,
+    ): Long? {
+        val units = usGaap[concept]?.units ?: return null
+        val entries = units.values.flatten()
+        return entries
+            .filter { it.form == "10-K" }
+            .maxByOrNull { it.end }
+            ?.value
+            ?.toLong()
+    }
+
+    private fun extractBigDecimal(
+        usGaap: Map<String, ConceptEntry>,
+        concept: String,
+    ): BigDecimal? {
+        val units = usGaap[concept]?.units ?: return null
+        val entries = units.values.flatten()
+        return entries
+            .filter { it.form == "10-K" }
+            .maxByOrNull { it.end }
+            ?.value
     }
 
     private fun loadTickers(): Map<Long, TickerEntry>? {
@@ -79,6 +144,7 @@ class EdgarClient(
                 tickerCache.set(indexed)
                 indexed
             } catch (e: Exception) {
+                // log-worthy
                 null
             }
         }
@@ -126,4 +192,23 @@ class EdgarClient(
         @JsonProperty("entity_name") val entityName: String = "",
         @JsonProperty("entity_id") val entityId: String = "",
     )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class CompanyFactsResponse(
+        val facts: Map<String, Map<String, ConceptEntry>> = emptyMap(),
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class ConceptEntry(
+        val units: Map<String, List<FactEntry>> = emptyMap(),
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class FactEntry(
+        val end: String = "",
+        val `val`: BigDecimal = BigDecimal.ZERO,
+        val form: String = "",
+    ) {
+        val value: BigDecimal get() = `val`
+    }
 }
