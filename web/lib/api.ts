@@ -75,6 +75,22 @@ export async function searchCompanies(q: string): Promise<CompanySearchResult[]>
   })
 }
 
+// ---- Company metrics ----
+
+export interface CompanyMetrics {
+  revenue: number | null
+  netIncome: number | null
+  eps: number | null
+  totalAssets: number | null
+  totalLiabilities: number | null
+}
+
+export async function getCompanyMetrics(cik: string): Promise<CompanyMetrics> {
+  return request<CompanyMetrics>(`/api/companies/${encodeURIComponent(cik)}/metrics`, {
+    method: 'GET',
+  })
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'
