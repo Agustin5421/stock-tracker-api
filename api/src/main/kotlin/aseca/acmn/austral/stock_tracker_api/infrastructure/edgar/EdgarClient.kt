@@ -3,8 +3,10 @@ package aseca.acmn.austral.stock_tracker_api.infrastructure.edgar
 import aseca.acmn.austral.stock_tracker_api.application.company.CompanyNotFoundException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarPort
+import aseca.acmn.austral.stock_tracker_api.application.company.EdgarUnavailableException
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanyMetrics
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanySearchResult
+import aseca.acmn.austral.stock_tracker_api.domain.company.Filing
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.core.ParameterizedTypeReference
@@ -100,6 +102,37 @@ class EdgarClient(
             totalAssets = extractLong(usGaap, "Assets"),
             totalLiabilities = extractLong(usGaap, "Liabilities"),
         )
+    }
+
+    override fun getRecentFilings(cik: String): List<Filing> {
+        val paddedCik = cik.padStart(10, '0')
+        throttle()
+        return try {
+            var notFound = false
+            val response =
+                client
+                    .get()
+                    .uri("https://data.sec.gov/submissions/CIK$paddedCik.json")
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError) { _, _ -> notFound = true }
+                    .body(SubmissionsResponse::class.java)
+            if (notFound) throw CompanyNotFoundException(cik)
+            val recent = response?.filings?.recent ?: return emptyList()
+            val forms = recent.form
+            val dates = recent.filingDate
+            val accessions = recent.accessionNumber
+            forms.indices.map { i ->
+                Filing(
+                    type = forms[i],
+                    filingDate = dates[i],
+                    accessionNumber = accessions[i],
+                )
+            }
+        } catch (e: CompanyNotFoundException) {
+            throw e
+        } catch (e: Exception) {
+            throw EdgarUnavailableException("Failed to fetch filings for CIK $cik", e)
+        }
     }
 
     private fun extractLong(
@@ -211,4 +244,21 @@ class EdgarClient(
     ) {
         val value: BigDecimal get() = `val`
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class SubmissionsResponse(
+        val filings: RecentFilingsWrapper = RecentFilingsWrapper(),
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class RecentFilingsWrapper(
+        val recent: RecentFilingsArrays = RecentFilingsArrays(),
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class RecentFilingsArrays(
+        val form: List<String> = emptyList(),
+        val filingDate: List<String> = emptyList(),
+        val accessionNumber: List<String> = emptyList(),
+    )
 }

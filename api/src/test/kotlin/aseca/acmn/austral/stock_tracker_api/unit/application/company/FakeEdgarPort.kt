@@ -3,8 +3,10 @@ package aseca.acmn.austral.stock_tracker_api.unit.application.company
 import aseca.acmn.austral.stock_tracker_api.application.company.CompanyNotFoundException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarPort
+import aseca.acmn.austral.stock_tracker_api.application.company.EdgarUnavailableException
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanyMetrics
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanySearchResult
+import aseca.acmn.austral.stock_tracker_api.domain.company.Filing
 
 class FakeEdgarPort : EdgarPort {
     var allResults: List<CompanySearchResult> = emptyList()
@@ -13,6 +15,9 @@ class FakeEdgarPort : EdgarPort {
     var shouldThrow: Boolean = false
     var metricsResult: CompanyMetrics? = null
     var metricsThrowsNotFound: Boolean = false
+    var filingsResult: List<Filing> = emptyList()
+    var filingsThrowsNotFound: Boolean = false
+    var filingsThrowsUnavailable: Boolean = false
 
     override fun searchAll(): List<CompanySearchResult> {
         if (shouldThrow) throw RuntimeException("EDGAR unavailable")
@@ -34,5 +39,12 @@ class FakeEdgarPort : EdgarPort {
             metricsThrowsNotFound -> throw CompanyNotFoundException(cik)
             metricsResult != null -> metricsResult!!
             else -> throw EdgarException("No metrics configured")
+        }
+
+    override fun getRecentFilings(cik: String): List<Filing> =
+        when {
+            filingsThrowsNotFound -> throw CompanyNotFoundException(cik)
+            filingsThrowsUnavailable -> throw EdgarUnavailableException("EDGAR unavailable")
+            else -> filingsResult
         }
 }
