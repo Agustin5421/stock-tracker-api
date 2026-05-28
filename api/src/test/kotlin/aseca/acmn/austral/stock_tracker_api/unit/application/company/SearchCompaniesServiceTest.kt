@@ -27,14 +27,14 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
-    fun tickerQueryDelegatesToSearchByTicker() {
+    fun tickerQuerySearchesByTickerAndName() {
         val fake = FakeEdgarPort().apply { tickerResults = mapOf("AAPL" to listOf(apple)) }
         val result = service(fake).search("AAPL")
         assertEquals(listOf(apple), result)
     }
 
     @Test
-    fun lowercaseShortQueryIsRoutedToNameSearch() {
+    fun lowercaseQuerySearchesByName() {
         val fake = FakeEdgarPort().apply { nameResults = mapOf("aapl" to listOf(apple)) }
         val result = service(fake).search("aapl")
         assertEquals(listOf(apple), result)
@@ -51,14 +51,14 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
-    fun nameQueryDelegatesToSearchByName() {
+    fun nameQuerySearchesByName() {
         val fake = FakeEdgarPort().apply { nameResults = mapOf("Apple Inc" to listOf(apple)) }
         val result = service(fake).search("Apple Inc")
         assertEquals(listOf(apple), result)
     }
 
     @Test
-    fun lowercaseNameWordIsRoutedToNameSearch() {
+    fun lowercaseNameWordSearchesByName() {
         val alcoa = CompanySearchResult("AA", "Alcoa Corp", "4281")
         val fake = FakeEdgarPort().apply { nameResults = mapOf("corp" to listOf(alcoa)) }
         val result = service(fake).search("corp")
@@ -66,10 +66,21 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
-    fun sixLetterQueryIsRoutedToNameSearch() {
+    fun sixLetterQuerySearchesByName() {
         val fake = FakeEdgarPort().apply { nameResults = mapOf("GOOGL1" to listOf(apple)) }
         val result = service(fake).search("GOOGL1")
         assertEquals(listOf(apple), result)
+    }
+
+    @Test
+    fun tickerAndNameResultsMergedWithTickerFirst() {
+        val fake =
+            FakeEdgarPort().apply {
+                tickerResults = mapOf("ATA" to listOf(appliedMaterials))
+                nameResults = mapOf("ATA" to listOf(apple, appliedMaterials))
+            }
+        val result = service(fake).search("ATA")
+        assertEquals(listOf(appliedMaterials, apple), result)
     }
 
     @Test
