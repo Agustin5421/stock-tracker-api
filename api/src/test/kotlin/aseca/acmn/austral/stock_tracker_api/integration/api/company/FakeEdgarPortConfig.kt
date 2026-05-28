@@ -7,6 +7,8 @@ import aseca.acmn.austral.stock_tracker_api.application.company.EdgarUnavailable
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanyMetrics
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanySearchResult
 import aseca.acmn.austral.stock_tracker_api.domain.company.Filing
+import aseca.acmn.austral.stock_tracker_api.domain.company.MetricDataPoint
+import aseca.acmn.austral.stock_tracker_api.domain.company.MetricType
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -28,6 +30,9 @@ class FakeEdgarPort : EdgarPort {
     var filingsResult: List<Filing> = emptyList()
     var filingsThrowsNotFound: Boolean = false
     var filingsThrowsUnavailable: Boolean = false
+    var historicalResult: List<MetricDataPoint> = emptyList()
+    var historicalThrowsNotFound: Boolean = false
+    var historicalThrowsUnavailable: Boolean = false
 
     override fun searchAll(): List<CompanySearchResult> {
         if (shouldThrow) throw RuntimeException("EDGAR unavailable")
@@ -56,5 +61,15 @@ class FakeEdgarPort : EdgarPort {
             filingsThrowsNotFound -> throw CompanyNotFoundException(cik)
             filingsThrowsUnavailable -> throw EdgarUnavailableException("EDGAR unavailable")
             else -> filingsResult
+        }
+
+    override fun getHistoricalMetrics(
+        cik: String,
+        metric: MetricType,
+    ): List<MetricDataPoint> =
+        when {
+            historicalThrowsNotFound -> throw CompanyNotFoundException(cik)
+            historicalThrowsUnavailable -> throw EdgarUnavailableException("EDGAR unavailable")
+            else -> historicalResult
         }
 }

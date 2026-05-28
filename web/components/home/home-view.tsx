@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { LogOut, TrendingUp } from 'lucide-react'
 
 import { CompanyFilings } from '@/components/company/company-filings'
+import { CompanyHistoricalMetrics } from '@/components/company/company-historical-metrics'
 import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
 import { Button } from '@/components/ui/button'
@@ -82,6 +83,7 @@ export function HomeView() {
                 <TabsList>
                   <TabsTrigger value="metrics">Métricas Financieras</TabsTrigger>
                   <TabsTrigger value="filings">Filings Recientes</TabsTrigger>
+                  <TabsTrigger value="historical">Histórico</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="metrics">
@@ -90,6 +92,10 @@ export function HomeView() {
 
                 <TabsContent value="filings">
                   <CompanyFilings cik={selectedCompany.cik} />
+                </TabsContent>
+
+                <TabsContent value="historical">
+                  <CompanyHistoricalMetrics cik={selectedCompany.cik} />
                 </TabsContent>
               </Tabs>
             </div>
