@@ -11,7 +11,12 @@ import { type CompanySearchResult, searchCompanies } from '@/lib/api'
 const DEBOUNCE_MS = 300
 const PAGE_SIZE = 15
 
-export function CompanySearch() {
+interface CompanySearchProps {
+  selectedCik?: string | null
+  onSelect?: (company: CompanySearchResult) => void
+}
+
+export function CompanySearch({ selectedCik, onSelect }: CompanySearchProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<CompanySearchResult[]>([])
   const [loading, setLoading] = useState(false)
@@ -78,18 +83,37 @@ export function CompanySearch() {
         ) : (
           <>
             <ul className="space-y-2">
-              {pageItems.map((company) => (
-                <li
-                  key={company.cik}
-                  className="rounded-lg border border-l-4 border-l-[#d4e64d] bg-card px-4 py-3"
-                >
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-bold text-foreground">{company.ticker}</span>
-                    <span className="text-sm text-foreground">{company.name}</span>
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">CIK: {company.cik}</p>
-                </li>
-              ))}
+              {pageItems.map((company) => {
+                const isSelected = selectedCik === company.cik
+                return (
+                  <li
+                    key={company.cik}
+                    data-testid={`company-result-${company.cik}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isSelected}
+                    onClick={() => onSelect?.(company)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onSelect?.(company)
+                      }
+                    }}
+                    className={[
+                      'cursor-pointer rounded-lg border border-l-4 border-l-[#d4e64d] px-4 py-3 transition-colors',
+                      isSelected
+                        ? 'bg-[#d4e64d]/10 ring-1 ring-[#d4e64d]'
+                        : 'bg-card hover:bg-muted/50',
+                    ].join(' ')}
+                  >
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-bold text-foreground">{company.ticker}</span>
+                      <span className="text-sm text-foreground">{company.name}</span>
+                    </div>
+                    <p className="mt-0.5 text-xs text-muted-foreground">CIK: {company.cik}</p>
+                  </li>
+                )
+              })}
             </ul>
 
             {totalPages > 1 && (

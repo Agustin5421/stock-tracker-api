@@ -9,3 +9,28 @@ Como inversor, quiero buscar empresas por nombre o ticker para encontrar compañ
 - El sistema muestra empresas coincidentes con la búsqueda.
 - Cada resultado muestra al menos el nombre de empresa y el ticker.
 - Si no hay resultados, el sistema informa que no se encontraron coincidencias.
+
+# US-005 — Consultar métricas financieras clave
+
+Como inversor, quiero consultar métricas financieras de una empresa, para analizar su situación económica.
+
+## Criterios de aceptación
+
+- El usuario puede seleccionar una empresa.
+- El sistema muestra Revenue.
+- El sistema muestra Net Income.
+- El sistema muestra EPS.
+- El sistema muestra Total Assets.
+- El sistema muestra Total Liabilities.
+- Los datos se obtienen desde SEC EDGAR.
+
+# US-006 — Consultar filings recientes
+
+Como inversor, quiero ver los filings recientes de una empresa, para revisar sus reportes financieros publicados.
+
+## Criterios de aceptación
+
+- El usuario puede seleccionar una empresa.
+- El sistema muestra filings recientes 10-K y 10-Q.
+- Cada filing muestra tipo, fecha y enlace o identificador de referencia.
+- Los datos se obtienen desde SEC EDGAR.

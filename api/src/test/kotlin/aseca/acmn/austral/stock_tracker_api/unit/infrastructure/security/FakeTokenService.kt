@@ -1,8 +1,8 @@
 package aseca.acmn.austral.stock_tracker_api.unit.infrastructure.security
 
-import aseca.acmn.austral.stock_tracker_api.application.InvalidTokenException
-import aseca.acmn.austral.stock_tracker_api.application.TokenClaims
-import aseca.acmn.austral.stock_tracker_api.application.TokenService
+import aseca.acmn.austral.stock_tracker_api.application.auth.InvalidTokenException
+import aseca.acmn.austral.stock_tracker_api.application.auth.TokenClaims
+import aseca.acmn.austral.stock_tracker_api.application.auth.TokenService
 import java.util.UUID
 
 /** Verifies a single hard-coded valid token; everything else is rejected. */

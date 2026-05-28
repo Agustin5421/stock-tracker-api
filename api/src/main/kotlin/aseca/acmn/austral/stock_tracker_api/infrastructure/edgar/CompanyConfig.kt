@@ -1,6 +1,12 @@
 package aseca.acmn.austral.stock_tracker_api.infrastructure.edgar
 
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarPort
+import aseca.acmn.austral.stock_tracker_api.application.company.GetCompanyMetricsService
+import aseca.acmn.austral.stock_tracker_api.application.company.GetCompanyMetricsUseCase
+import aseca.acmn.austral.stock_tracker_api.application.company.GetHistoricalMetricsService
+import aseca.acmn.austral.stock_tracker_api.application.company.GetHistoricalMetricsUseCase
+import aseca.acmn.austral.stock_tracker_api.application.company.GetRecentFilingsService
+import aseca.acmn.austral.stock_tracker_api.application.company.GetRecentFilingsUseCase
 import aseca.acmn.austral.stock_tracker_api.application.company.SearchCompaniesService
 import aseca.acmn.austral.stock_tracker_api.application.company.SearchCompaniesUseCase
 import org.springframework.context.annotation.Bean
@@ -19,4 +25,13 @@ class CompanyConfig {
 
     @Bean
     fun searchCompaniesUseCase(edgarPort: EdgarPort): SearchCompaniesUseCase = SearchCompaniesService(edgarPort)
+
+    @Bean
+    fun getCompanyMetricsUseCase(edgarPort: EdgarPort): GetCompanyMetricsUseCase = GetCompanyMetricsService(edgarPort)
+
+    @Bean
+    fun getRecentFilingsUseCase(edgarPort: EdgarPort): GetRecentFilingsUseCase = GetRecentFilingsService(edgarPort)
+
+    @Bean
+    fun getHistoricalMetricsUseCase(edgarPort: EdgarPort): GetHistoricalMetricsUseCase = GetHistoricalMetricsService(edgarPort)
 }

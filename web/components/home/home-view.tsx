@@ -1,16 +1,29 @@
 'use client'
 
+import { useState } from 'react'
+
 import { LogOut, TrendingUp } from 'lucide-react'
 
+import { CompanyFilings } from '@/components/company/company-filings'
+import { CompanyHistoricalMetrics } from '@/components/company/company-historical-metrics'
+import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
 import { Button } from '@/components/ui/button'
-import { clearToken } from '@/lib/api'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { type CompanySearchResult, clearToken } from '@/lib/api'
 import { navigate } from '@/lib/routing'
 
 export function HomeView() {
+  const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null)
+
   function handleLogout() {
     clearToken()
     navigate('login')
+  }
+
+  function handleSelect(company: CompanySearchResult) {
+    setSelectedCompany((prev) => (prev?.cik === company.cik ? null : company))
   }
 
   return (
@@ -43,7 +56,51 @@ export function HomeView() {
           </p>
         </div>
 
-        <CompanySearch />
+        {/* Dashboard widgets — asymmetric 30/70 split on large screens */}
+        <div className="grid gap-6 lg:grid-cols-[30%_1fr]">
+          {/* Left column: company search (~30%) */}
+          <Card className="border-l-4 border-l-[#d4e64d] self-start">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-foreground">
+                Buscar Empresa
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CompanySearch selectedCik={selectedCompany?.cik ?? null} onSelect={handleSelect} />
+            </CardContent>
+          </Card>
+
+          {/* Right column: detail panel (~70%) — only visible when a company is selected */}
+          {selectedCompany && (
+            <div className="flex flex-col gap-3">
+              <p className="text-xs text-muted-foreground px-1">
+                <span className="font-semibold text-foreground">{selectedCompany.ticker}</span>
+                {' — '}
+                {selectedCompany.name}
+              </p>
+
+              <Tabs defaultValue="metrics" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="metrics">Métricas Financieras</TabsTrigger>
+                  <TabsTrigger value="filings">Filings Recientes</TabsTrigger>
+                  <TabsTrigger value="historical">Histórico</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="metrics">
+                  <CompanyMetrics cik={selectedCompany.cik} />
+                </TabsContent>
+
+                <TabsContent value="filings">
+                  <CompanyFilings cik={selectedCompany.cik} />
+                </TabsContent>
+
+                <TabsContent value="historical">
+                  <CompanyHistoricalMetrics cik={selectedCompany.cik} />
+                </TabsContent>
+              </Tabs>
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Footer */}

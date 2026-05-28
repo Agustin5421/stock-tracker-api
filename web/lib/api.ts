@@ -75,6 +75,55 @@ export async function searchCompanies(q: string): Promise<CompanySearchResult[]>
   })
 }
 
+// ---- Company metrics ----
+
+export interface CompanyMetrics {
+  revenue: number | null
+  netIncome: number | null
+  eps: number | null
+  totalAssets: number | null
+  totalLiabilities: number | null
+}
+
+export async function getCompanyMetrics(cik: string): Promise<CompanyMetrics> {
+  return request<CompanyMetrics>(`/api/companies/${encodeURIComponent(cik)}/metrics`, {
+    method: 'GET',
+  })
+}
+
+// ---- Company filings ----
+
+export interface Filing {
+  type: string
+  filingDate: string
+  accessionNumber: string
+}
+
+export async function getCompanyFilings(cik: string): Promise<Filing[]> {
+  return request<Filing[]>(`/api/companies/${encodeURIComponent(cik)}/filings`, {
+    method: 'GET',
+  })
+}
+
+// ---- Historical metrics ----
+
+export type MetricType = 'revenue' | 'netIncome' | 'eps' | 'totalAssets' | 'totalLiabilities'
+
+export interface MetricDataPoint {
+  period: string
+  value: number
+}
+
+export async function getCompanyHistoricalMetrics(
+  cik: string,
+  metric: MetricType,
+): Promise<MetricDataPoint[]> {
+  return request<MetricDataPoint[]>(
+    `/api/companies/${encodeURIComponent(cik)}/metrics/historical?metric=${metric}`,
+    { method: 'GET' },
+  )
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'

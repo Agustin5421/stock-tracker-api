@@ -1,12 +1,12 @@
 package aseca.acmn.austral.stock_tracker_api.infrastructure.security
 
-import aseca.acmn.austral.stock_tracker_api.application.LoginService
-import aseca.acmn.austral.stock_tracker_api.application.LoginUseCase
-import aseca.acmn.austral.stock_tracker_api.application.PasswordHasher
-import aseca.acmn.austral.stock_tracker_api.application.RegisterUserService
-import aseca.acmn.austral.stock_tracker_api.application.RegisterUserUseCase
-import aseca.acmn.austral.stock_tracker_api.application.TokenService
-import aseca.acmn.austral.stock_tracker_api.application.UserRepository
+import aseca.acmn.austral.stock_tracker_api.application.auth.LoginService
+import aseca.acmn.austral.stock_tracker_api.application.auth.LoginUseCase
+import aseca.acmn.austral.stock_tracker_api.application.auth.PasswordHasher
+import aseca.acmn.austral.stock_tracker_api.application.auth.RegisterUserService
+import aseca.acmn.austral.stock_tracker_api.application.auth.RegisterUserUseCase
+import aseca.acmn.austral.stock_tracker_api.application.auth.TokenService
+import aseca.acmn.austral.stock_tracker_api.application.user.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
