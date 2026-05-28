@@ -40,34 +40,11 @@ class EdgarClient(
 
     override fun searchByName(name: String): List<CompanySearchResult> {
         val cache = loadTickers() ?: return emptyList()
-        throttle()
-        return try {
-            val response =
-                client
-                    .get()
-                    .uri("https://efts.sec.gov/LATEST/search-index?q={q}&forms=10-K", name)
-                    .retrieve()
-                    .body(object : ParameterizedTypeReference<EftsResponse>() {})
-                    ?: return emptyList()
-
-            response.hits.hits
-                .mapNotNull { hit ->
-                    val cikLong =
-                        hit.source.entityId
-                            .trimStart('0')
-                            .toLongOrNull() ?: return@mapNotNull null
-                    val entry = cache[cikLong]
-                    CompanySearchResult(
-                        ticker = entry?.ticker ?: "",
-                        name = hit.source.entityName,
-                        cik = cikLong.toString(),
-                    )
-                }.distinctBy { it.cik }
-                .take(20)
-        } catch (e: Exception) {
-            // log-worthy
-            emptyList()
-        }
+        return cache.values
+            .filter { it.title.contains(name, ignoreCase = true) }
+            .sortedBy { it.ticker }
+            .take(20)
+            .map { CompanySearchResult(it.ticker, it.title, it.cikStr.toString()) }
     }
 
     override fun getMetrics(cik: String): CompanyMetrics {
@@ -203,27 +180,6 @@ class EdgarClient(
         @JsonProperty("cik_str") val cikStr: Long,
         @JsonProperty("ticker") val ticker: String,
         @JsonProperty("title") val title: String,
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsResponse(
-        val hits: EftsHits = EftsHits(),
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsHits(
-        val hits: List<EftsHit> = emptyList(),
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsHit(
-        @JsonProperty("_source") val source: EftsSource = EftsSource(),
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsSource(
-        @JsonProperty("entity_name") val entityName: String = "",
-        @JsonProperty("entity_id") val entityId: String = "",
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

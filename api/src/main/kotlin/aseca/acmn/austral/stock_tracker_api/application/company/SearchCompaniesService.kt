@@ -16,5 +16,5 @@ class SearchCompaniesService(
             emptyList()
         }
 
-    private fun isTicker(query: String) = query.trim().matches(Regex("[A-Za-z]{1,5}"))
+    private fun isTicker(query: String) = query.trim().matches(Regex("[A-Z]{1,5}"))
 }
