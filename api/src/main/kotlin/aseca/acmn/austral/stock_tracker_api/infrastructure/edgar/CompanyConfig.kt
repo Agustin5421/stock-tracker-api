@@ -3,6 +3,8 @@ package aseca.acmn.austral.stock_tracker_api.infrastructure.edgar
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarPort
 import aseca.acmn.austral.stock_tracker_api.application.company.GetCompanyMetricsService
 import aseca.acmn.austral.stock_tracker_api.application.company.GetCompanyMetricsUseCase
+import aseca.acmn.austral.stock_tracker_api.application.company.GetHistoricalMetricsService
+import aseca.acmn.austral.stock_tracker_api.application.company.GetHistoricalMetricsUseCase
 import aseca.acmn.austral.stock_tracker_api.application.company.GetRecentFilingsService
 import aseca.acmn.austral.stock_tracker_api.application.company.GetRecentFilingsUseCase
 import aseca.acmn.austral.stock_tracker_api.application.company.SearchCompaniesService
@@ -29,4 +31,7 @@ class CompanyConfig {
 
     @Bean
     fun getRecentFilingsUseCase(edgarPort: EdgarPort): GetRecentFilingsUseCase = GetRecentFilingsService(edgarPort)
+
+    @Bean
+    fun getHistoricalMetricsUseCase(edgarPort: EdgarPort): GetHistoricalMetricsUseCase = GetHistoricalMetricsService(edgarPort)
 }

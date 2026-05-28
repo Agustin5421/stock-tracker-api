@@ -105,6 +105,25 @@ export async function getCompanyFilings(cik: string): Promise<Filing[]> {
   })
 }
 
+// ---- Historical metrics ----
+
+export type MetricType = 'revenue' | 'netIncome' | 'eps' | 'totalAssets' | 'totalLiabilities'
+
+export interface MetricDataPoint {
+  period: string
+  value: number
+}
+
+export async function getCompanyHistoricalMetrics(
+  cik: string,
+  metric: MetricType,
+): Promise<MetricDataPoint[]> {
+  return request<MetricDataPoint[]>(
+    `/api/companies/${encodeURIComponent(cik)}/metrics/historical?metric=${metric}`,
+    { method: 'GET' },
+  )
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'
