@@ -9,6 +9,7 @@ export default defineConfig({
     baseUrl: 'http://localhost:3000',
     specPattern: 'cypress/e2e/**/*.cy.ts',
     supportFile: false,
+    defaultCommandTimeout: 20000,
     env: {
       apiUrl: process.env.NEXT_PUBLIC_API_URL,
     },
