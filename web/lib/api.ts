@@ -91,6 +91,20 @@ export async function getCompanyMetrics(cik: string): Promise<CompanyMetrics> {
   })
 }
 
+// ---- Company filings ----
+
+export interface Filing {
+  type: string
+  filingDate: string
+  accessionNumber: string
+}
+
+export async function getCompanyFilings(cik: string): Promise<Filing[]> {
+  return request<Filing[]>(`/api/companies/${encodeURIComponent(cik)}/filings`, {
+    method: 'GET',
+  })
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'

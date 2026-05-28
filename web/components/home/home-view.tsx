@@ -4,10 +4,12 @@ import { useState } from 'react'
 
 import { LogOut, TrendingUp } from 'lucide-react'
 
+import { CompanyFilings } from '@/components/company/company-filings'
 import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { type CompanySearchResult, clearToken } from '@/lib/api'
 import { navigate } from '@/lib/routing'
 
@@ -53,10 +55,10 @@ export function HomeView() {
           </p>
         </div>
 
-        {/* Dashboard widgets */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Company search card */}
-          <Card className="border-l-4 border-l-[#d4e64d]">
+        {/* Dashboard widgets — asymmetric 30/70 split on large screens */}
+        <div className="grid gap-6 lg:grid-cols-[30%_1fr]">
+          {/* Left column: company search (~30%) */}
+          <Card className="border-l-4 border-l-[#d4e64d] self-start">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-foreground">
                 Buscar Empresa
@@ -67,15 +69,29 @@ export function HomeView() {
             </CardContent>
           </Card>
 
-          {/* Metrics card — visible only when a company is selected */}
+          {/* Right column: detail panel (~70%) — only visible when a company is selected */}
           {selectedCompany && (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               <p className="text-xs text-muted-foreground px-1">
                 <span className="font-semibold text-foreground">{selectedCompany.ticker}</span>
                 {' — '}
                 {selectedCompany.name}
               </p>
-              <CompanyMetrics cik={selectedCompany.cik} />
+
+              <Tabs defaultValue="metrics" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="metrics">Métricas Financieras</TabsTrigger>
+                  <TabsTrigger value="filings">Filings Recientes</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="metrics">
+                  <CompanyMetrics cik={selectedCompany.cik} />
+                </TabsContent>
+
+                <TabsContent value="filings">
+                  <CompanyFilings cik={selectedCompany.cik} />
+                </TabsContent>
+              </Tabs>
             </div>
           )}
         </div>

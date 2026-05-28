@@ -32,3 +32,19 @@ class UsuarioInversor(HttpUser):
             json={"email": email, "password": "Password123!"},
             name="Registro de usuario",
         )
+
+    @task(5)
+    def buscar_empresa_por_ticker(self):
+        self.client.get("/api/companies/search?q=AAPL", name="Búsqueda por ticker")
+
+    @task(3)
+    def buscar_empresa_por_nombre(self):
+        self.client.get("/api/companies/search?q=Apple", name="Búsqueda por nombre")
+
+    @task(4)
+    def consultar_metricas_financieras(self):
+        self.client.get("/api/companies/320193/metrics", name="Métricas financieras")
+
+    @task(4)
+    def consultar_filings_recientes(self):
+        self.client.get("/api/companies/320193/filings", name="Filings recientes")
