@@ -34,8 +34,8 @@ class SearchCompaniesServiceTest {
     }
 
     @Test
-    fun tickerQueryIsNormalizedToUppercase() {
-        val fake = FakeEdgarPort().apply { tickerResults = mapOf("AAPL" to listOf(apple)) }
+    fun lowercaseShortQueryIsRoutedToNameSearch() {
+        val fake = FakeEdgarPort().apply { nameResults = mapOf("aapl" to listOf(apple)) }
         val result = service(fake).search("aapl")
         assertEquals(listOf(apple), result)
     }
@@ -55,6 +55,14 @@ class SearchCompaniesServiceTest {
         val fake = FakeEdgarPort().apply { nameResults = mapOf("Apple Inc" to listOf(apple)) }
         val result = service(fake).search("Apple Inc")
         assertEquals(listOf(apple), result)
+    }
+
+    @Test
+    fun lowercaseNameWordIsRoutedToNameSearch() {
+        val alcoa = CompanySearchResult("AA", "Alcoa Corp", "4281")
+        val fake = FakeEdgarPort().apply { nameResults = mapOf("corp" to listOf(alcoa)) }
+        val result = service(fake).search("corp")
+        assertEquals(listOf(alcoa), result)
     }
 
     @Test
