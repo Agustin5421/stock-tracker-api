@@ -1,4 +1,8 @@
 describe('Filings recientes de empresa', () => {
+  before(() => {
+    cy.request(`${Cypress.env('apiUrl')}/companies?query=`)
+  })
+
   beforeEach(() => {
     const email = `filings_${Date.now()}@example.com`
     const password = 'Password123!'
