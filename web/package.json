@@ -9,9 +9,15 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "git -C .. config core.hooksPath .githooks || true"
+    "prepare": "git -C .. config core.hooksPath .githooks || true",
+    "static:build": "next build",
+    "cap:sync": "cap sync",
+    "mobile:run": "cap run android",
+    "mobile:livereload": "cap run android --livereload --external"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-alert-dialog": "1.1.15",
@@ -63,6 +69,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.3.4",
     "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^22",
