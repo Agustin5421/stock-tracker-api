@@ -3,6 +3,7 @@ package aseca.acmn.austral.stock_tracker_api.infrastructure.security
 import aseca.acmn.austral.stock_tracker_api.application.company.CompanyNotFoundException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarUnavailableException
+import aseca.acmn.austral.stock_tracker_api.application.price.PriceNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(CompanyNotFoundException::class)
     fun handleNotFound(e: CompanyNotFoundException): ResponseEntity<Unit> = ResponseEntity.notFound().build()
+
+    @ExceptionHandler(PriceNotFoundException::class)
+    fun handlePriceNotFound(e: PriceNotFoundException): ResponseEntity<Unit> = ResponseEntity.notFound().build()
 
     @ExceptionHandler(EdgarUnavailableException::class)
     fun handleEdgarUnavailable(e: EdgarUnavailableException): ResponseEntity<Unit> =
