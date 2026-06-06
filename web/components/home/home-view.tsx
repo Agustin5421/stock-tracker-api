@@ -9,6 +9,7 @@ import { CompanyHistoricalMetrics } from '@/components/company/company-historica
 import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
 import { BuyStockForm } from '@/components/portfolio/buy-stock-form'
+import { PortfolioView } from '@/components/portfolio/portfolio-view'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -17,6 +18,8 @@ import { navigate } from '@/lib/routing'
 
 export function HomeView() {
   const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null)
+  // Bumped after a successful purchase so the portfolio re-fetches.
+  const [portfolioRefresh, setPortfolioRefresh] = useState(0)
 
   function handleLogout() {
     clearToken()
@@ -65,7 +68,17 @@ export function HomeView() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <BuyStockForm />
+            <BuyStockForm onSuccess={() => setPortfolioRefresh((n) => n + 1)} />
+          </CardContent>
+        </Card>
+
+        {/* Portfolio — current state */}
+        <Card className="border-l-4 border-l-[#d4e64d]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-foreground">Mi Portfolio</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PortfolioView refreshSignal={portfolioRefresh} />
           </CardContent>
         </Card>
 

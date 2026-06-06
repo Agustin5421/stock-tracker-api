@@ -173,6 +173,38 @@ export async function registerPurchase(
   return body as RegisterPurchaseResponse
 }
 
+// ---- Portfolio state ----
+
+export interface PortfolioPosition {
+  ticker: string
+  quantity: number
+  // null when the ticker has no stored price yet.
+  latestPrice: number | null
+  currentValue: number | null
+}
+
+export interface Portfolio {
+  positions: PortfolioPosition[]
+  totalValue: number
+}
+
+export async function getPortfolio(): Promise<Portfolio> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/portfolio`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (res.status === 401) handleUnauthorized()
+  const body = await res.json().catch(() => null)
+  if (!res.ok) {
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+  return body as Portfolio
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'

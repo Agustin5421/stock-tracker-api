@@ -32,7 +32,12 @@ function formatPrice(value: number): string {
   })}`
 }
 
-export function BuyStockForm() {
+interface BuyStockFormProps {
+  // Called after a purchase is registered successfully (e.g. to refresh the portfolio).
+  onSuccess?: () => void
+}
+
+export function BuyStockForm({ onSuccess }: BuyStockFormProps = {}) {
   const [open, setOpen] = useState(false)
   const [options, setOptions] = useState<LatestPrice[]>([])
   const [loadingOptions, setLoadingOptions] = useState(false)
@@ -82,6 +87,7 @@ export function BuyStockForm() {
       setResult(res)
       setSelected(null)
       setQuantity('')
+      onSuccess?.()
     } catch (err) {
       if (err instanceof SessionExpiredError) return
       setError(err instanceof Error ? err.message : 'Error al registrar la compra.')
