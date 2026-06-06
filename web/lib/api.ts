@@ -124,6 +124,41 @@ export async function getCompanyHistoricalMetrics(
   )
 }
 
+// ---- Portfolio ----
+
+export interface RegisterPurchaseRequest {
+  ticker: string
+  quantity: number
+}
+
+export interface RegisterPurchaseResponse {
+  ticker: string
+  quantity: number
+  priceUsed: number
+}
+
+export async function registerPurchase(
+  data: RegisterPurchaseRequest,
+): Promise<RegisterPurchaseResponse> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/portfolio/purchases`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(data),
+  })
+  if (res.status === 422) {
+    throw new Error('No hay precio disponible para este ticker. Actualizá los precios primero.')
+  }
+  const body = await res.json().catch(() => null)
+  if (!res.ok) {
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+  return body as RegisterPurchaseResponse
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'

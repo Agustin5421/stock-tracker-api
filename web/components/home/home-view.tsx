@@ -8,6 +8,7 @@ import { CompanyFilings } from '@/components/company/company-filings'
 import { CompanyHistoricalMetrics } from '@/components/company/company-historical-metrics'
 import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
+import { BuyStockForm } from '@/components/portfolio/buy-stock-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -55,6 +56,18 @@ export function HomeView() {
             Busca empresas para analizar tu portfolio.
           </p>
         </div>
+
+        {/* Portfolio — buy form */}
+        <Card className="border-l-4 border-l-[#d4e64d]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-foreground">
+              Registrar Compra
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BuyStockForm />
+          </CardContent>
+        </Card>
 
         {/* Dashboard widgets — asymmetric 30/70 split on large screens */}
         <div className="grid gap-6 lg:grid-cols-[30%_1fr]">
