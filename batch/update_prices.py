@@ -27,10 +27,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger("update_prices")
 
-TICKER_QUERY = (
-    "SELECT DISTINCT ticker FROM portfolio_positions "
-    "UNION SELECT DISTINCT ticker FROM watchlist_items"
-)
+# Distinct tickers tracked across portfolios. When the watchlist feature lands,
+# UNION its source table here (note: a UNION against a missing table fails the
+# whole query, so only reference tables that exist).
+TICKER_QUERY = "SELECT DISTINCT ticker FROM positions"
 
 
 class FatalConfigError(RuntimeError):
