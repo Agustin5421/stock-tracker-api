@@ -173,6 +173,46 @@ export async function registerPurchase(
   return body as RegisterPurchaseResponse
 }
 
+// ---- Sales ----
+
+export interface RegisterSaleRequest {
+  ticker: string
+  quantity: number
+}
+
+export interface RegisterSaleResponse {
+  ticker: string
+  // Remaining quantity in the position after the sale.
+  quantity: number
+  priceUsed: number
+}
+
+export async function registerSale(data: RegisterSaleRequest): Promise<RegisterSaleResponse> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/portfolio/sales`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(data),
+  })
+  if (res.status === 401) handleUnauthorized()
+  const body = await res.json().catch(() => null)
+  if (res.status === 422) {
+    // 422 can mean either no stored price or insufficient shares / no position.
+    // Prefer the API's message; fall back to a generic Spanish one.
+    throw new Error(
+      (body as ApiError)?.error ??
+        'No se pudo registrar la venta (precio no disponible o acciones insuficientes).',
+    )
+  }
+  if (!res.ok) {
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+  return body as RegisterSaleResponse
+}
+
 // ---- Portfolio state ----
 
 export interface PortfolioPosition {
