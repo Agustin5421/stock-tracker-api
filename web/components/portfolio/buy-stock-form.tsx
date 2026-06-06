@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 
@@ -17,54 +17,51 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
-  type CompanySearchResult,
+  type LatestPrice,
   type RegisterPurchaseResponse,
   SessionExpiredError,
+  getAvailablePrices,
   registerPurchase,
-  searchCompanies,
 } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-const DEBOUNCE_MS = 300
+function formatPrice(value: number): string {
+  return `$${value.toLocaleString('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`
+}
 
 export function BuyStockForm() {
   const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState('')
-  const [options, setOptions] = useState<CompanySearchResult[]>([])
-  const [searching, setSearching] = useState(false)
-  const [selected, setSelected] = useState<CompanySearchResult | null>(null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [options, setOptions] = useState<LatestPrice[]>([])
+  const [loadingOptions, setLoadingOptions] = useState(false)
+  const [selected, setSelected] = useState<LatestPrice | null>(null)
 
   const [quantity, setQuantity] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<RegisterPurchaseResponse | null>(null)
 
-  async function fetchOptions(q: string) {
-    setSearching(true)
+  async function fetchOptions() {
+    setLoadingOptions(true)
     try {
-      setOptions(await searchCompanies(q))
+      setOptions(await getAvailablePrices())
     } catch {
       setOptions([])
     } finally {
-      setSearching(false)
+      setLoadingOptions(false)
     }
   }
 
   function handleOpenChange(next: boolean) {
     setOpen(next)
-    // Preload a default list the first time the dropdown opens.
-    if (next && options.length === 0) fetchOptions('')
+    // Refresh the buyable-ticker list each time the dropdown opens.
+    if (next) fetchOptions()
   }
 
-  function handleQueryChange(value: string) {
-    setQuery(value)
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => fetchOptions(value), DEBOUNCE_MS)
-  }
-
-  function handleSelect(company: CompanySearchResult) {
-    setSelected(company)
+  function handleSelect(price: LatestPrice) {
+    setSelected(price)
     setOpen(false)
   }
 
@@ -112,7 +109,7 @@ export function BuyStockForm() {
                 {selected ? (
                   <span className="flex items-baseline gap-2 truncate">
                     <span className="font-semibold">{selected.ticker}</span>
-                    <span className="truncate text-muted-foreground">{selected.name}</span>
+                    <span className="text-muted-foreground">{formatPrice(selected.price)}</span>
                   </span>
                 ) : (
                   <span className="text-muted-foreground">Elegí un ticker</span>
@@ -121,37 +118,37 @@ export function BuyStockForm() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-              <Command shouldFilter={false}>
-                <CommandInput
-                  placeholder="Buscar por ticker o nombre..."
-                  value={query}
-                  onValueChange={handleQueryChange}
-                />
+              <Command>
+                <CommandInput placeholder="Buscar ticker..." />
                 <CommandList>
-                  {searching && (
+                  {loadingOptions && (
                     <div className="flex items-center justify-center py-6">
                       <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-hidden />
                     </div>
                   )}
-                  {!searching && <CommandEmpty>No se encontraron resultados.</CommandEmpty>}
-                  {!searching && (
+                  {!loadingOptions && (
+                    <CommandEmpty>
+                      No hay tickers con precio disponible. Actualizá los precios primero.
+                    </CommandEmpty>
+                  )}
+                  {!loadingOptions && (
                     <CommandGroup>
-                      {options.map((company) => (
+                      {options.map((price) => (
                         <CommandItem
-                          key={company.cik}
-                          value={company.ticker}
-                          onSelect={() => handleSelect(company)}
+                          key={price.ticker}
+                          value={price.ticker}
+                          onSelect={() => handleSelect(price)}
                         >
                           <Check
                             className={cn(
                               'mr-2 h-4 w-4',
-                              selected?.cik === company.cik ? 'opacity-100' : 'opacity-0',
+                              selected?.ticker === price.ticker ? 'opacity-100' : 'opacity-0',
                             )}
                             aria-hidden
                           />
-                          <span className="font-semibold">{company.ticker}</span>
-                          <span className="ml-2 truncate text-muted-foreground">
-                            {company.name}
+                          <span className="font-semibold">{price.ticker}</span>
+                          <span className="ml-auto text-muted-foreground">
+                            {formatPrice(price.price)}
                           </span>
                         </CommandItem>
                       ))}
@@ -189,11 +186,7 @@ export function BuyStockForm() {
             {result.ticker}
           </p>
           <p className="mt-0.5 text-muted-foreground">
-            Precio de referencia: $
-            {result.priceUsed.toLocaleString('es-AR', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            Precio de referencia: {formatPrice(result.priceUsed)}
           </p>
         </div>
       )}

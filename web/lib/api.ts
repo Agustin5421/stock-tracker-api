@@ -124,6 +124,19 @@ export async function getCompanyHistoricalMetrics(
   )
 }
 
+// ---- Prices ----
+
+export interface LatestPrice {
+  ticker: string
+  price: number
+  fetchedAt: string
+}
+
+// Tickers that currently have a stored price (i.e. are buyable). Public endpoint.
+export async function getAvailablePrices(): Promise<LatestPrice[]> {
+  return request<LatestPrice[]>('/api/prices', { method: 'GET' })
+}
+
 // ---- Portfolio ----
 
 export interface RegisterPurchaseRequest {
