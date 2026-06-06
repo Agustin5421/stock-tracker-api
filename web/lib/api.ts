@@ -149,6 +149,7 @@ export async function registerPurchase(
     },
     body: JSON.stringify(data),
   })
+  if (res.status === 401) handleUnauthorized()
   if (res.status === 422) {
     throw new Error('No hay precio disponible para este ticker. Actualizá los precios primero.')
   }
@@ -173,4 +174,25 @@ export function getToken(): string | null {
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY)
+}
+
+export class SessionExpiredError extends Error {
+  readonly isSessionExpired = true
+  constructor() {
+    super('Tu sesión expiró. Por favor iniciá sesión nuevamente.')
+  }
+}
+
+export function handleUnauthorized(): never {
+  clearToken()
+  import('sonner').then(({ toast }) => {
+    toast.error('Tu sesión expiró', {
+      description: 'Por favor iniciá sesión nuevamente.',
+      duration: 3000,
+    })
+  })
+  setTimeout(() => {
+    window.location.hash = '#/login'
+  }, 3000)
+  throw new SessionExpiredError()
 }
