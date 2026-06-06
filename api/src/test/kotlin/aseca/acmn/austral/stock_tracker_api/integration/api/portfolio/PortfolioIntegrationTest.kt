@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.UUID
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,8 +50,7 @@ class PortfolioIntegrationTest {
         price: String,
     ) {
         jdbcTemplate.update(
-            "INSERT INTO stock_prices (id, ticker, price, fetched_at) VALUES (?, ?, ?, NOW())",
-            UUID.randomUUID().toString(),
+            "INSERT INTO stock_prices (ticker, price, fetched_at) VALUES (?, ?, NOW())",
             ticker,
             price,
         )

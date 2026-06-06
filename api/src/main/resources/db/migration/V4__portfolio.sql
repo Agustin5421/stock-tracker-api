@@ -5,14 +5,6 @@ CREATE TABLE portfolios (
     CONSTRAINT fk_portfolios_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
-CREATE TABLE stock_prices (
-    id         CHAR(36)       NOT NULL,
-    ticker     VARCHAR(10)    NOT NULL,
-    price      DECIMAL(19, 4) NOT NULL,
-    fetched_at DATETIME       NOT NULL,
-    CONSTRAINT pk_stock_prices PRIMARY KEY (id)
-);
-
 CREATE TABLE positions (
     id           CHAR(36)    NOT NULL,
     portfolio_id CHAR(36)    NOT NULL,
