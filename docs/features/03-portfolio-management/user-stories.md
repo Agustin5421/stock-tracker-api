@@ -15,7 +15,21 @@ para incrementar una posición de mi portfolio con un precio de referencia del s
 - La compra queda registrada en el historial de operaciones.
 - El balance del portfolio refleja la compra.
 
-## US-013 — Registrar venta de acciones
+## US-013 — Consultar estado actual del portfolio
+
+**Como inversor,**
+quiero consultar el estado actual de mi portfolio,
+para visualizar las acciones que lo componen y su valor actual.
+
+**Criterios de aceptación**
+- El usuario puede ver todas sus posiciones vigentes.
+- Cada posición muestra ticker y cantidad.
+- Cada posición muestra el último precio almacenado disponible.
+- Cada posición muestra su valor actual.
+- El sistema muestra el valor total del portfolio.
+- Si una posición no tiene precio actualizado, el sistema informa la situación sin romper la visualización.
+
+## US-014 — Registrar venta de acciones
 
 **Como inversor,**
 quiero registrar una venta de acciones usando el último precio almacenado,
@@ -30,20 +44,6 @@ para reducir una posición de mi portfolio y mantener actualizado mi balance.
 - La venta reduce la cantidad de la posición correspondiente.
 - La venta queda registrada en el historial de operaciones.
 - El balance del portfolio refleja la venta.
-
-## US-014 — Consultar estado actual del portfolio
-
-**Como inversor,**
-quiero consultar el estado actual de mi portfolio,
-para visualizar las acciones que lo componen y su valor actual.
-
-**Criterios de aceptación**
-- El usuario puede ver todas sus posiciones vigentes.
-- Cada posición muestra ticker y cantidad.
-- Cada posición muestra el último precio almacenado disponible.
-- Cada posición muestra su valor actual.
-- El sistema muestra el valor total del portfolio.
-- Si una posición no tiene precio actualizado, el sistema informa la situación sin romper la visualización.
 
 ## US-015 — Consultar ganancia o pérdida por posición
 

@@ -170,6 +170,8 @@ jobs:
 
       - name: Start API
         working-directory: api
+        env:
+          SPRING_PROFILES_ACTIVE: e2e
         run: nohup ./gradlew bootRun > api.log 2>&1 &
 
       - name: Start web
