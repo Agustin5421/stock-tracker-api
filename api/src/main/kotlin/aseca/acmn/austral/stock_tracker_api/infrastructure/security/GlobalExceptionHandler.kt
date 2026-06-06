@@ -3,6 +3,7 @@ package aseca.acmn.austral.stock_tracker_api.infrastructure.security
 import aseca.acmn.austral.stock_tracker_api.application.company.CompanyNotFoundException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarException
 import aseca.acmn.austral.stock_tracker_api.application.company.EdgarUnavailableException
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.InsufficientSharesException
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.NoPriceAvailableException
 import aseca.acmn.austral.stock_tracker_api.application.price.PriceNotFoundException
 import org.springframework.http.HttpStatus
@@ -27,5 +28,9 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoPriceAvailableException::class)
     fun handleNoPriceAvailable(e: NoPriceAvailableException): ResponseEntity<Unit> =
+        ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build()
+
+    @ExceptionHandler(InsufficientSharesException::class)
+    fun handleInsufficientShares(e: InsufficientSharesException): ResponseEntity<Unit> =
         ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build()
 }

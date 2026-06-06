@@ -3,6 +3,7 @@ package aseca.acmn.austral.stock_tracker_api.api.portfolio
 import aseca.acmn.austral.stock_tracker_api.application.auth.AuthenticatedUser
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.BuyStockUseCase
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetPortfolioUseCase
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.SellStockUseCase
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 class PortfolioController(
     private val buyStockUseCase: BuyStockUseCase,
     private val getPortfolioUseCase: GetPortfolioUseCase,
+    private val sellStockUseCase: SellStockUseCase,
 ) {
     @PostMapping("/purchases")
     fun buy(
@@ -28,6 +30,17 @@ class PortfolioController(
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(PurchaseResponse(result.position.ticker, result.position.quantity, result.priceUsed))
+    }
+
+    @PostMapping("/sales")
+    fun sell(
+        @AuthenticationPrincipal principal: AuthenticatedUser,
+        @RequestBody @Valid request: SaleRequest,
+    ): ResponseEntity<SaleResponse> {
+        val result = sellStockUseCase.sell(principal.id, request.ticker, request.quantity)
+        return ResponseEntity.ok(
+            SaleResponse(request.ticker, result.position?.quantity ?: 0, result.priceUsed),
+        )
     }
 
     @GetMapping

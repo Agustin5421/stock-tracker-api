@@ -22,6 +22,9 @@ class JpaPortfolioRepository(
     @Transactional
     override fun save(portfolio: Portfolio): Portfolio {
         portfolioRepo.save(PortfolioEntity(id = portfolio.id, userId = portfolio.userId))
+        val currentTickers = portfolio.positions.map { it.ticker }.toSet()
+        val stale = positionRepo.findByPortfolioId(portfolio.id).filter { it.ticker !in currentTickers }
+        positionRepo.deleteAll(stale)
         positionRepo.saveAll(portfolio.positions.map { PositionEntity.fromDomain(it, portfolio.id) })
         operationRepo.saveAll(portfolio.operations.map { OperationEntity.fromDomain(it, portfolio.id) })
         return portfolio

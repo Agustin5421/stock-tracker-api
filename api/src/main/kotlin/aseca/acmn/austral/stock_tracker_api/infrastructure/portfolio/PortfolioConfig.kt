@@ -5,6 +5,8 @@ import aseca.acmn.austral.stock_tracker_api.application.portfolio.BuyStockUseCas
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetPortfolioService
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetPortfolioUseCase
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.PortfolioRepository
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.SellStockService
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.SellStockUseCase
 import aseca.acmn.austral.stock_tracker_api.application.price.StockPriceRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,4 +24,10 @@ class PortfolioConfig {
         portfolioRepository: PortfolioRepository,
         stockPriceRepository: StockPriceRepository,
     ): GetPortfolioUseCase = GetPortfolioService(portfolioRepository, stockPriceRepository)
+
+    @Bean
+    fun sellStockUseCase(
+        portfolioRepository: PortfolioRepository,
+        stockPriceRepository: StockPriceRepository,
+    ): SellStockUseCase = SellStockService(portfolioRepository, stockPriceRepository)
 }
