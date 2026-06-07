@@ -114,6 +114,9 @@ describe('Gestión del portfolio', () => {
 
     buy('MSFT', 10)
     cy.contains('Compraste 10 acciones de MSFT').should('be.visible')
+    // operations.executed_at has second precision (DATETIME), so the buy and the
+    // sell must land in different seconds for the desc ordering to be deterministic.
+    cy.wait(1100)
     sell('MSFT', 4)
     cy.get('[data-testid="sell-success"]').should('contain', 'Vendiste 4')
 
