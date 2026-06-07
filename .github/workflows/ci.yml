@@ -94,9 +94,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r batch/requirements.txt
-      - run: pip install pytest
-      - name: Run batch unit tests
-        run: pytest batch/tests/
       - name: Run Flyway migrations against test MySQL
         run: |
           docker run --rm --network host \

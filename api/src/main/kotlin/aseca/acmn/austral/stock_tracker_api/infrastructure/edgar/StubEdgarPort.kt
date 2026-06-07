@@ -37,10 +37,10 @@ class StubEdgarPort : EdgarPort {
 
     private val historicalPoints =
         listOf(
-            MetricDataPoint("2021-09-25", BigDecimal("365_817_000_000")),
-            MetricDataPoint("2022-09-24", BigDecimal("394_328_000_000")),
-            MetricDataPoint("2023-09-30", BigDecimal("383_285_000_000")),
-            MetricDataPoint("2024-09-28", BigDecimal("391_035_000_000")),
+            MetricDataPoint("2021-09-25", BigDecimal.valueOf(365_817_000_000L)),
+            MetricDataPoint("2022-09-24", BigDecimal.valueOf(394_328_000_000L)),
+            MetricDataPoint("2023-09-30", BigDecimal.valueOf(383_285_000_000L)),
+            MetricDataPoint("2024-09-28", BigDecimal.valueOf(391_035_000_000L)),
         )
 
     override fun searchAll(): List<CompanySearchResult> = companies
