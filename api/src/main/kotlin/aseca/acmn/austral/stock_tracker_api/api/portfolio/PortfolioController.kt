@@ -2,6 +2,7 @@ package aseca.acmn.austral.stock_tracker_api.api.portfolio
 
 import aseca.acmn.austral.stock_tracker_api.application.auth.AuthenticatedUser
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.BuyStockUseCase
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetOperationHistoryUseCase
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetPortfolioUseCase
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.SellStockUseCase
 import jakarta.validation.Valid
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 class PortfolioController(
     private val buyStockUseCase: BuyStockUseCase,
     private val getPortfolioUseCase: GetPortfolioUseCase,
+    private val getOperationHistoryUseCase: GetOperationHistoryUseCase,
     private val sellStockUseCase: SellStockUseCase,
 ) {
     @PostMapping("/purchases")
@@ -50,8 +52,27 @@ class PortfolioController(
         val view = getPortfolioUseCase.getPortfolio(principal.id)
         val positions =
             view.positions.map {
-                PositionViewResponse(it.ticker, it.quantity, it.latestPrice, it.currentValue)
+                PositionViewResponse(
+                    it.ticker,
+                    it.quantity,
+                    it.latestPrice,
+                    it.currentValue,
+                    it.avgCost,
+                    it.unrealizedPnl,
+                    it.unrealizedPnlPercent,
+                )
             }
-        return ResponseEntity.ok(PortfolioResponse(positions, view.totalValue))
+        return ResponseEntity.ok(PortfolioResponse(positions, view.totalValue, view.pricesUpdatedAt))
+    }
+
+    @GetMapping("/operations")
+    fun getOperationHistory(
+        @AuthenticationPrincipal principal: AuthenticatedUser,
+    ): ResponseEntity<List<OperationResponse>> {
+        val operations =
+            getOperationHistoryUseCase.getOperationHistory(principal.id).map {
+                OperationResponse(it.type, it.ticker, it.quantity, it.price, it.executedAt)
+            }
+        return ResponseEntity.ok(operations)
     }
 }

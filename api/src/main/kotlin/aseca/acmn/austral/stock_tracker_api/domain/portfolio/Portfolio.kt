@@ -1,6 +1,7 @@
 package aseca.acmn.austral.stock_tracker_api.domain.portfolio
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Instant
 import java.util.UUID
 
@@ -71,6 +72,41 @@ class Portfolio(
             ),
         )
         return updated
+    }
+
+    fun averageCostOf(ticker: String): BigDecimal? {
+        var quantity = 0
+        var totalCost = BigDecimal.ZERO
+        _operations
+            .filter { it.ticker == ticker }
+            .sortedBy { it.executedAt }
+            .forEach { operation ->
+                when (operation.type) {
+                    OperationType.BUY -> {
+                        quantity += operation.quantity
+                        totalCost += operation.price.multiply(BigDecimal(operation.quantity))
+                    }
+                    OperationType.SELL -> {
+                        val currentAverage =
+                            if (quantity > 0) {
+                                totalCost.divide(BigDecimal(quantity), 4, RoundingMode.HALF_UP)
+                            } else {
+                                BigDecimal.ZERO
+                            }
+                        totalCost -= currentAverage.multiply(BigDecimal(operation.quantity))
+                        quantity -= operation.quantity
+                    }
+                }
+                if (quantity <= 0) {
+                    quantity = 0
+                    totalCost = BigDecimal.ZERO
+                }
+            }
+        return if (quantity > 0) {
+            totalCost.divide(BigDecimal(quantity), 4, RoundingMode.HALF_UP)
+        } else {
+            null
+        }
     }
 
     companion object {
