@@ -1,6 +1,7 @@
 package aseca.acmn.austral.stock_tracker_api.application.portfolio
 
 import java.math.BigDecimal
+import java.time.Instant
 
 data class PositionView(
     val ticker: String,
@@ -12,4 +13,5 @@ data class PositionView(
 data class PortfolioView(
     val positions: List<PositionView>,
     val totalValue: BigDecimal,
+    val pricesUpdatedAt: Instant? = null,
 )

@@ -54,7 +54,7 @@ class PortfolioController(
             view.positions.map {
                 PositionViewResponse(it.ticker, it.quantity, it.latestPrice, it.currentValue)
             }
-        return ResponseEntity.ok(PortfolioResponse(positions, view.totalValue))
+        return ResponseEntity.ok(PortfolioResponse(positions, view.totalValue, view.pricesUpdatedAt))
     }
 
     @GetMapping("/operations")

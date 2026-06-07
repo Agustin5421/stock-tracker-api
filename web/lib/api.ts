@@ -226,6 +226,8 @@ export interface PortfolioPosition {
 export interface Portfolio {
   positions: PortfolioPosition[]
   totalValue: number
+  // System-wide timestamp (ISO-8601) of the last price update; null if prices were never updated.
+  pricesUpdatedAt: string | null
 }
 
 export async function getPortfolio(): Promise<Portfolio> {

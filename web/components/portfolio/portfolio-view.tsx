@@ -22,6 +22,10 @@ function formatCurrency(value: number): string {
   })}`
 }
 
+function formatTimestamp(iso: string): string {
+  return new Date(iso).toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' })
+}
+
 interface PortfolioViewProps {
   // When this value changes, the portfolio is re-fetched (e.g. after a purchase).
   refreshSignal?: number
@@ -132,14 +136,26 @@ export function PortfolioView({ refreshSignal = 0 }: PortfolioViewProps) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border border-[#d4e64d]/40 bg-[#d4e64d]/10 px-4 py-3">
-        <span className="text-sm font-medium text-muted-foreground">Valor total del portfolio</span>
-        <span
-          data-testid="portfolio-total-value"
-          className="text-xl font-bold text-foreground tabular-nums"
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between rounded-lg border border-[#d4e64d]/40 bg-[#d4e64d]/10 px-4 py-3">
+          <span className="text-sm font-medium text-muted-foreground">
+            Valor total del portfolio
+          </span>
+          <span
+            data-testid="portfolio-total-value"
+            className="text-xl font-bold text-foreground tabular-nums"
+          >
+            {formatCurrency(portfolio.totalValue)}
+          </span>
+        </div>
+        <p
+          data-testid="portfolio-prices-updated-at"
+          className="text-right text-xs text-muted-foreground"
         >
-          {formatCurrency(portfolio.totalValue)}
-        </span>
+          {portfolio.pricesUpdatedAt
+            ? `Precios actualizados: ${formatTimestamp(portfolio.pricesUpdatedAt)}`
+            : 'Sin actualización de precios disponible'}
+        </p>
       </div>
     </div>
   )

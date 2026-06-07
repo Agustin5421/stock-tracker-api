@@ -9,7 +9,10 @@ class GetPortfolioService(
     private val stockPriceRepository: StockPriceRepository,
 ) : GetPortfolioUseCase {
     override fun getPortfolio(userId: UUID): PortfolioView {
-        val portfolio = portfolioRepository.findByUserId(userId) ?: return PortfolioView(emptyList(), BigDecimal.ZERO)
+        val pricesUpdatedAt = stockPriceRepository.findLatestFetchedAt()
+        val portfolio =
+            portfolioRepository.findByUserId(userId)
+                ?: return PortfolioView(emptyList(), BigDecimal.ZERO, pricesUpdatedAt)
         val positions =
             portfolio.positions.map { position ->
                 val latestPrice = stockPriceRepository.findLatestByTicker(position.ticker)?.price
@@ -20,6 +23,6 @@ class GetPortfolioService(
             positions.fold(BigDecimal.ZERO) { acc, position ->
                 acc + (position.currentValue ?: BigDecimal.ZERO)
             }
-        return PortfolioView(positions, totalValue)
+        return PortfolioView(positions, totalValue, pricesUpdatedAt)
     }
 }
