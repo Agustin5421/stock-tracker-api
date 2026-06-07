@@ -45,19 +45,7 @@ para reducir una posición de mi portfolio y mantener actualizado mi balance.
 - La venta queda registrada en el historial de operaciones.
 - El balance del portfolio refleja la venta.
 
-## US-015 — Consultar ganancia o pérdida por posición
-
-**Como inversor,**
-quiero ver la ganancia o pérdida de cada posición,
-para evaluar el rendimiento de mis inversiones.
-
-**Criterios de aceptación**
-- El sistema muestra ganancia o pérdida por posición.
-- El cálculo compara el precio de compra o referencia contra el último precio almacenado.
-- El sistema muestra el resultado de forma clara para el usuario.
-- Si no hay precio almacenado suficiente para calcular el rendimiento, el sistema informa la situación.
-
-## US-016 — Consultar historial de operaciones
+## US-015 — Consultar historial de operaciones
 
 **Como inversor,**
 quiero consultar el historial de compras y ventas,
@@ -69,7 +57,7 @@ para revisar los movimientos que afectaron mi portfolio.
 - El historial se muestra ordenado por fecha.
 - El usuario solo visualiza operaciones propias.
 
-## US-017 — Visualizar última actualización de precios
+## US-016 — Visualizar última actualización de precios
 
 **Como inversor,**
 quiero ver cuándo se actualizaron por última vez los precios del sistema,
@@ -79,6 +67,18 @@ para saber qué tan recientes son los valores usados en mi portfolio.
 - El sistema muestra fecha y hora de última actualización de precios.
 - La fecha se muestra junto a la valuación del portfolio.
 - Si nunca se actualizaron precios, el sistema informa que no hay actualización disponible.
+
+## US-017 — Consultar ganancia o pérdida por posición
+
+**Como inversor,**
+quiero ver la ganancia o pérdida de cada posición,
+para evaluar el rendimiento de mis inversiones.
+
+**Criterios de aceptación**
+- El sistema muestra ganancia o pérdida por posición.
+- El cálculo compara el precio de compra o referencia contra el último precio almacenado.
+- El sistema muestra el resultado de forma clara para el usuario.
+- Si no hay precio almacenado suficiente para calcular el rendimiento, el sistema informa la situación.
 
 ## US-018 — Actualizar precios de tickers del portfolio
 
