@@ -2,6 +2,8 @@ package aseca.acmn.austral.stock_tracker_api.infrastructure.portfolio
 
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.BuyStockService
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.BuyStockUseCase
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetOperationHistoryService
+import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetOperationHistoryUseCase
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetPortfolioService
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.GetPortfolioUseCase
 import aseca.acmn.austral.stock_tracker_api.application.portfolio.PortfolioRepository
@@ -24,6 +26,10 @@ class PortfolioConfig {
         portfolioRepository: PortfolioRepository,
         stockPriceRepository: StockPriceRepository,
     ): GetPortfolioUseCase = GetPortfolioService(portfolioRepository, stockPriceRepository)
+
+    @Bean
+    fun getOperationHistoryUseCase(portfolioRepository: PortfolioRepository): GetOperationHistoryUseCase =
+        GetOperationHistoryService(portfolioRepository)
 
     @Bean
     fun sellStockUseCase(
