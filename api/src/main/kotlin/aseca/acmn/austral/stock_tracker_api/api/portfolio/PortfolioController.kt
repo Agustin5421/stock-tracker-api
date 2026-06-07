@@ -52,7 +52,15 @@ class PortfolioController(
         val view = getPortfolioUseCase.getPortfolio(principal.id)
         val positions =
             view.positions.map {
-                PositionViewResponse(it.ticker, it.quantity, it.latestPrice, it.currentValue)
+                PositionViewResponse(
+                    it.ticker,
+                    it.quantity,
+                    it.latestPrice,
+                    it.currentValue,
+                    it.avgCost,
+                    it.unrealizedPnl,
+                    it.unrealizedPnlPercent,
+                )
             }
         return ResponseEntity.ok(PortfolioResponse(positions, view.totalValue, view.pricesUpdatedAt))
     }

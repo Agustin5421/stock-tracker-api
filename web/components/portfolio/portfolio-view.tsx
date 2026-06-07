@@ -22,6 +22,29 @@ function formatCurrency(value: number): string {
   })}`
 }
 
+// The API may serialize BigDecimal fields as a number or a string; coerce defensively.
+// Returns null for null/undefined or values that don't parse to a finite number.
+function toNumber(value: number | string | null | undefined): number | null {
+  if (value === null || value === undefined) return null
+  const n = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(n) ? n : null
+}
+
+// Signed currency for P&L, e.g. "+$144.20" / "-$50.00".
+function formatSignedCurrency(value: number): string {
+  const sign = value >= 0 ? '+' : '-'
+  return `${sign}${formatCurrency(Math.abs(value))}`
+}
+
+// Signed percent for P&L, e.g. "+8.24%" / "-3.10%".
+function formatSignedPercent(value: number): string {
+  const sign = value >= 0 ? '+' : '-'
+  return `${sign}${Math.abs(value).toLocaleString('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`
+}
+
 function formatTimestamp(iso: string): string {
   return new Date(iso).toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' })
 }
@@ -105,26 +128,63 @@ export function PortfolioView({ refreshSignal = 0 }: PortfolioViewProps) {
               <TableHead>Ticker</TableHead>
               <TableHead className="text-right">Cantidad</TableHead>
               <TableHead className="text-right">Último precio</TableHead>
+              <TableHead className="text-right">Costo prom.</TableHead>
               <TableHead className="text-right">Valor actual</TableHead>
+              <TableHead className="text-right">Ganancia/Pérdida</TableHead>
+              <TableHead className="text-right">%</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {portfolio.positions.map((position) => {
-              const hasPrice = position.latestPrice !== null && position.currentValue !== null
+              const latestPrice = toNumber(position.latestPrice)
+              const currentValue = toNumber(position.currentValue)
+              const avgCost = toNumber(position.avgCost)
+              const pnl = toNumber(position.unrealizedPnl)
+              const pnlPercent = toNumber(position.unrealizedPnlPercent)
+              const hasPrice = latestPrice !== null && currentValue !== null
+              const hasPnl = pnl !== null
+              const pnlColor = (pnl ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
               return (
                 <TableRow key={position.ticker} data-testid="portfolio-position">
                   <TableCell className="font-semibold">{position.ticker}</TableCell>
                   <TableCell className="text-right tabular-nums">{position.quantity}</TableCell>
                   <TableCell className="text-right tabular-nums">
                     {hasPrice ? (
-                      formatCurrency(position.latestPrice as number)
+                      formatCurrency(latestPrice as number)
                     ) : (
                       <span className="text-muted-foreground">Sin precio actualizado</span>
                     )}
                   </TableCell>
+                  <TableCell data-testid="position-avg-cost" className="text-right tabular-nums">
+                    {avgCost !== null ? (
+                      formatCurrency(avgCost)
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right font-medium tabular-nums">
                     {hasPrice ? (
-                      formatCurrency(position.currentValue as number)
+                      formatCurrency(currentValue as number)
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell
+                    data-testid="position-pnl"
+                    className={`text-right font-medium tabular-nums ${hasPnl ? pnlColor : ''}`}
+                  >
+                    {hasPnl ? (
+                      formatSignedCurrency(pnl as number)
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell
+                    data-testid="position-pnl-percent"
+                    className={`text-right tabular-nums ${pnlPercent !== null ? pnlColor : ''}`}
+                  >
+                    {pnlPercent !== null ? (
+                      formatSignedPercent(pnlPercent)
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}

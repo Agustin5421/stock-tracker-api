@@ -221,6 +221,12 @@ export interface PortfolioPosition {
   // null when the ticker has no stored price yet.
   latestPrice: number | null
   currentValue: number | null
+  // Weighted-average cost per share; always present for an open position.
+  avgCost: number | null
+  // (latestPrice - avgCost) * quantity; null when latestPrice is null.
+  unrealizedPnl: number | null
+  // (latestPrice - avgCost) / avgCost * 100; null when latestPrice is null.
+  unrealizedPnlPercent: number | null
 }
 
 export interface Portfolio {
