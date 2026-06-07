@@ -8,6 +8,9 @@ import { CompanyFilings } from '@/components/company/company-filings'
 import { CompanyHistoricalMetrics } from '@/components/company/company-historical-metrics'
 import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
+import { BuyStockForm } from '@/components/portfolio/buy-stock-form'
+import { PortfolioView } from '@/components/portfolio/portfolio-view'
+import { SellStockForm } from '@/components/portfolio/sell-stock-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -16,6 +19,8 @@ import { navigate } from '@/lib/routing'
 
 export function HomeView() {
   const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null)
+  // Bumped after a successful purchase so the portfolio re-fetches.
+  const [portfolioRefresh, setPortfolioRefresh] = useState(0)
 
   function handleLogout() {
     clearToken()
@@ -55,6 +60,41 @@ export function HomeView() {
             Busca empresas para analizar tu portfolio.
           </p>
         </div>
+
+        {/* Portfolio — buy / sell forms */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="border-l-4 border-l-[#d4e64d]">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-foreground">
+                Registrar Compra
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <BuyStockForm onSuccess={() => setPortfolioRefresh((n) => n + 1)} />
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-[#d4e64d]">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-foreground">
+                Registrar Venta
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SellStockForm onSuccess={() => setPortfolioRefresh((n) => n + 1)} />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Portfolio — current state */}
+        <Card className="border-l-4 border-l-[#d4e64d]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-foreground">Mi Portfolio</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PortfolioView refreshSignal={portfolioRefresh} />
+          </CardContent>
+        </Card>
 
         {/* Dashboard widgets — asymmetric 30/70 split on large screens */}
         <div className="grid gap-6 lg:grid-cols-[30%_1fr]">
