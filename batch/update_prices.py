@@ -105,10 +105,10 @@ def _bulk_prices(tickers: list[str]) -> dict[str, float]:
     close = data["Close"]
     for ticker in tickers:
         try:
-            if len(tickers) == 1:
-                series = close
-            else:
+            if ticker in close.columns:
                 series = close[ticker]
+            else:
+                series = close
             value = series.dropna()
             if not value.empty:
                 prices[ticker] = float(value.iloc[-1])
