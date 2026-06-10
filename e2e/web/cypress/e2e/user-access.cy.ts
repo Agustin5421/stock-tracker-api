@@ -21,7 +21,7 @@ describe('Acceso de usuarios', () => {
     cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
 
     cy.visit('/#/login')
-
+    cy.wait(500)
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="password"]').type(password)
     cy.contains('button[type="submit"]', 'Iniciar sesion').click()
@@ -35,7 +35,7 @@ describe('Acceso de usuarios', () => {
     const password = 'WrongPassword!'
 
     cy.visit('/#/login')
-
+    cy.wait(500)
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="password"]').type(password)
     cy.contains('button[type="submit"]', 'Iniciar sesion').click()
@@ -51,6 +51,7 @@ describe('Acceso de usuarios', () => {
     cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
 
     cy.visit('/#/login')
+    cy.wait(500)
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="password"]').type(password)
     cy.contains('button[type="submit"]', 'Iniciar sesion').click()
@@ -70,6 +71,7 @@ describe('Acceso de usuarios', () => {
     cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
 
     cy.visit('/#/login')
+    cy.wait(500)
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="password"]').type(password)
     cy.contains('button[type="submit"]', 'Iniciar sesion').click()
@@ -79,7 +81,7 @@ describe('Acceso de usuarios', () => {
 
     cy.contains('button', 'Cerrar sesion').click()
     cy.location('hash').should('eq', '#/login')
-
+    cy.wait(500)
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="password"]').type(password)
     cy.contains('button[type="submit"]', 'Iniciar sesion').click()
