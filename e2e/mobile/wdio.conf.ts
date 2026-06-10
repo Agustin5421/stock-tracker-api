@@ -1,4 +1,5 @@
 import type { Options } from '@wdio/types'
+import path from 'path'
 
 export const config: Options.Testrunner = {
   runner: 'local',
@@ -19,9 +20,10 @@ export const config: Options.Testrunner = {
     platformName: 'Android',
     'appium:automationName': 'UiAutomator2',
     'appium:deviceName': 'Android Emulator', // Nombre genérico para capturar cualquier emulador activo de Android Studio
-    'appium:app': '../../web/android/app/build/outputs/apk/debug/app-debug.apk',
+    'appium:app': path.join(__dirname, '..', '..', 'web', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk'),
     'appium:newCommandTimeout': 240,
-    'appium:autoGrantPermissions': true
+    'appium:autoGrantPermissions': true,
+    'appium:chromedriverAutodownload': true
   }],
   logLevel: 'info',
   bail: 0,

@@ -1,5 +1,8 @@
 {
   "appId": "com.kiwii.app",
   "appName": "Kiwii",
-  "webDir": "out"
+  "webDir": "out",
+  "server": {
+    "androidScheme": "http"
+  }
 }
