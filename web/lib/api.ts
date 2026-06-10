@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 // ---- DTOs ----
 
@@ -221,11 +221,19 @@ export interface PortfolioPosition {
   // null when the ticker has no stored price yet.
   latestPrice: number | null
   currentValue: number | null
+  // Weighted-average cost per share; always present for an open position.
+  avgCost: number | null
+  // (latestPrice - avgCost) * quantity; null when latestPrice is null.
+  unrealizedPnl: number | null
+  // (latestPrice - avgCost) / avgCost * 100; null when latestPrice is null.
+  unrealizedPnlPercent: number | null
 }
 
 export interface Portfolio {
   positions: PortfolioPosition[]
   totalValue: number
+  // System-wide timestamp (ISO-8601) of the last price update; null if prices were never updated.
+  pricesUpdatedAt: string | null
 }
 
 export async function getPortfolio(): Promise<Portfolio> {
@@ -243,6 +251,36 @@ export async function getPortfolio(): Promise<Portfolio> {
     throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
   }
   return body as Portfolio
+}
+
+// ---- Operation history ----
+
+export interface OperationHistoryItem {
+  type: 'BUY' | 'SELL'
+  ticker: string
+  quantity: number
+  // The API may serialize the price as a string (BigDecimal) or a number.
+  price: string | number
+  // ISO-8601 instant, e.g. "2026-06-07T14:30:00Z".
+  executedAt: string
+}
+
+// Returns the authenticated user's operations, already ordered by date DESC.
+export async function getOperationHistory(): Promise<OperationHistoryItem[]> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/portfolio/operations`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (res.status === 401) handleUnauthorized()
+  const body = await res.json().catch(() => null)
+  if (!res.ok) {
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+  return body as OperationHistoryItem[]
 }
 
 // ---- Token helpers ----

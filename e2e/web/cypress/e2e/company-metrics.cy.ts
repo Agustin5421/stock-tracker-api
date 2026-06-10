@@ -5,6 +5,7 @@ describe('Métricas financieras de empresa', () => {
 
     cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
     cy.visit('/#/login')
+    cy.wait(500)
     cy.get('input[type="email"]').type(email)
     cy.get('input[type="password"]').type(password)
     cy.contains('button[type="submit"]', 'Iniciar sesion').click()

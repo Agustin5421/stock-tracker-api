@@ -35,3 +35,9 @@ out/
 ### Kotlin ###
 .kotlin
 !.env.example
+
+### H2 Database ###
+.h2/
+*.mv.db
+*.trace.db
+

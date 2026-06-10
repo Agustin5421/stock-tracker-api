@@ -9,6 +9,7 @@ import { CompanyHistoricalMetrics } from '@/components/company/company-historica
 import { CompanyMetrics } from '@/components/company/company-metrics'
 import { CompanySearch } from '@/components/company/company-search'
 import { BuyStockForm } from '@/components/portfolio/buy-stock-form'
+import { OperationHistory } from '@/components/portfolio/operation-history'
 import { PortfolioView } from '@/components/portfolio/portfolio-view'
 import { SellStockForm } from '@/components/portfolio/sell-stock-form'
 import { Button } from '@/components/ui/button'
@@ -93,6 +94,18 @@ export function HomeView() {
           </CardHeader>
           <CardContent>
             <PortfolioView refreshSignal={portfolioRefresh} />
+          </CardContent>
+        </Card>
+
+        {/* Portfolio — operation history */}
+        <Card className="border-l-4 border-l-[#d4e64d]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-foreground">
+              Historial de Operaciones
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OperationHistory refreshSignal={portfolioRefresh} />
           </CardContent>
         </Card>
 
