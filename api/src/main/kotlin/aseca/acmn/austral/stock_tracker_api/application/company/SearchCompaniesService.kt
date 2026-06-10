@@ -7,14 +7,16 @@ class SearchCompaniesService(
 ) : SearchCompaniesUseCase {
     override fun search(query: String): List<CompanySearchResult> =
         try {
-            when {
-                query.isBlank() -> edgar.searchAll()
-                isTicker(query) -> edgar.searchByTicker(query.trim().uppercase())
-                else -> edgar.searchByName(query.trim())
+            if (query.isBlank()) {
+                edgar.searchAll()
+            } else {
+                val q = query.trim()
+                val tickerMatches = edgar.searchByTicker(q)
+                val nameMatches = edgar.searchByName(q)
+                val seen = mutableSetOf<String>()
+                (tickerMatches + nameMatches).filter { seen.add(it.cik) }
             }
         } catch (e: Exception) {
             emptyList()
         }
-
-    private fun isTicker(query: String) = query.trim().matches(Regex("[A-Za-z]{1,5}"))
 }

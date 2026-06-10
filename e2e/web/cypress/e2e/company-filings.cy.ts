@@ -11,13 +11,6 @@ describe('Filings recientes de empresa', () => {
     cy.location('hash').should('eq', '#/home')
   })
 
-  it('Seleccionar empresa y abrir tab de filings muestra el panel', () => {
-    cy.get('[data-testid="company-search-input"]').type('AAPL')
-    cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).should('be.visible').click()
-    cy.contains('Filings Recientes').click()
-    cy.get('[data-testid="company-filings-panel"]').should('be.visible')
-  })
-
   it('Panel de filings muestra contenido para Apple', () => {
     cy.get('[data-testid="company-search-input"]').type('AAPL')
     cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).should('be.visible').click()

@@ -7,6 +7,8 @@ import aseca.acmn.austral.stock_tracker_api.application.company.EdgarUnavailable
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanyMetrics
 import aseca.acmn.austral.stock_tracker_api.domain.company.CompanySearchResult
 import aseca.acmn.austral.stock_tracker_api.domain.company.Filing
+import aseca.acmn.austral.stock_tracker_api.domain.company.MetricDataPoint
+import aseca.acmn.austral.stock_tracker_api.domain.company.MetricType
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.core.ParameterizedTypeReference
@@ -40,58 +42,16 @@ class EdgarClient(
 
     override fun searchByName(name: String): List<CompanySearchResult> {
         val cache = loadTickers() ?: return emptyList()
-        throttle()
-        return try {
-            val response =
-                client
-                    .get()
-                    .uri("https://efts.sec.gov/LATEST/search-index?q={q}&forms=10-K", name)
-                    .retrieve()
-                    .body(object : ParameterizedTypeReference<EftsResponse>() {})
-                    ?: return emptyList()
-
-            response.hits.hits
-                .mapNotNull { hit ->
-                    val cikLong =
-                        hit.source.entityId
-                            .trimStart('0')
-                            .toLongOrNull() ?: return@mapNotNull null
-                    val entry = cache[cikLong]
-                    CompanySearchResult(
-                        ticker = entry?.ticker ?: "",
-                        name = hit.source.entityName,
-                        cik = cikLong.toString(),
-                    )
-                }.distinctBy { it.cik }
-                .take(20)
-        } catch (e: Exception) {
-            // log-worthy
-            emptyList()
-        }
+        return cache.values
+            .filter { it.title.contains(name, ignoreCase = true) }
+            .sortedBy { it.ticker }
+            .take(20)
+            .map { CompanySearchResult(it.ticker, it.title, it.cikStr.toString()) }
     }
 
     override fun getMetrics(cik: String): CompanyMetrics {
-        val paddedCik = cik.padStart(10, '0')
-        throttle()
-        val facts =
-            try {
-                var notFound = false
-                val response =
-                    client
-                        .get()
-                        .uri("https://data.sec.gov/api/xbrl/companyfacts/CIK$paddedCik.json")
-                        .retrieve()
-                        .onStatus(HttpStatusCode::is4xxClientError) { _, _ -> notFound = true }
-                        .body(CompanyFactsResponse::class.java)
-                if (notFound) throw CompanyNotFoundException(cik)
-                response ?: throw EdgarException("Empty response body for CIK $cik")
-            } catch (e: CompanyNotFoundException) {
-                throw e
-            } catch (e: Exception) {
-                throw EdgarException("Failed to fetch metrics for CIK $cik", e)
-            }
-
-        val usGaap = facts.facts["us-gaap"] ?: emptyMap()
+        val facts = loadCompanyFacts(cik)
+        val usGaap = facts["us-gaap"] ?: emptyMap()
 
         return CompanyMetrics(
             revenue =
@@ -183,6 +143,59 @@ class EdgarClient(
         }
     }
 
+    override fun getHistoricalMetrics(
+        cik: String,
+        metric: MetricType,
+    ): List<MetricDataPoint> {
+        val facts = loadCompanyFacts(cik)
+        val usGaap = facts["us-gaap"] ?: emptyMap()
+        val conceptNames =
+            when (metric) {
+                MetricType.REVENUE ->
+                    listOf(
+                        "RevenueFromContractWithCustomerExcludingAssessedTax",
+                        "Revenues",
+                    )
+                MetricType.NET_INCOME -> listOf("NetIncomeLoss")
+                MetricType.EPS -> listOf("EarningsPerShareBasic")
+                MetricType.TOTAL_ASSETS -> listOf("Assets")
+                MetricType.TOTAL_LIABILITIES -> listOf("Liabilities")
+            }
+        val entries =
+            conceptNames
+                .firstNotNullOfOrNull { name -> usGaap[name]?.units?.values?.flatten() }
+                ?: emptyList()
+        return entries
+            .filter { it.form == "10-K" || it.form == "10-Q" }
+            .groupBy { it.end }
+            .mapValues { (_, v) -> v.maxByOrNull { it.end }!! }
+            .values
+            .sortedBy { it.end }
+            .takeLast(8)
+            .map { MetricDataPoint(it.end, it.value) }
+    }
+
+    private fun loadCompanyFacts(cik: String): Map<String, Map<String, ConceptEntry>> {
+        val paddedCik = cik.padStart(10, '0')
+        throttle()
+        return try {
+            var notFound = false
+            val response =
+                client
+                    .get()
+                    .uri("https://data.sec.gov/api/xbrl/companyfacts/CIK$paddedCik.json")
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError) { _, _ -> notFound = true }
+                    .body(CompanyFactsResponse::class.java)
+            if (notFound) throw CompanyNotFoundException(cik)
+            response?.facts ?: throw EdgarException("Empty response body for CIK $cik")
+        } catch (e: CompanyNotFoundException) {
+            throw e
+        } catch (e: Exception) {
+            throw EdgarException("Failed to fetch company facts for CIK $cik", e)
+        }
+    }
+
     private fun throttle() {
         synchronized(lock) {
             val now = System.currentTimeMillis()
@@ -203,27 +216,6 @@ class EdgarClient(
         @JsonProperty("cik_str") val cikStr: Long,
         @JsonProperty("ticker") val ticker: String,
         @JsonProperty("title") val title: String,
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsResponse(
-        val hits: EftsHits = EftsHits(),
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsHits(
-        val hits: List<EftsHit> = emptyList(),
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsHit(
-        @JsonProperty("_source") val source: EftsSource = EftsSource(),
-    )
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class EftsSource(
-        @JsonProperty("entity_name") val entityName: String = "",
-        @JsonProperty("entity_id") val entityId: String = "",
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

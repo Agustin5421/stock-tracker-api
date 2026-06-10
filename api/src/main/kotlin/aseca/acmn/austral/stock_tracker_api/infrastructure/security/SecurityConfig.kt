@@ -25,8 +25,14 @@ class SecurityConfig {
             .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/auth/**", "/test/**", "/actuator/**", "/api/companies/**")
-                    .permitAll()
+                    .requestMatchers(
+                        "/auth/**",
+                        "/test/**",
+                        "/actuator/**",
+                        "/api/companies/**",
+                        "/api/prices/**",
+                        "/admin/prices/**",
+                    ).permitAll()
                     .anyRequest()
                     .authenticated()
             }.csrf { it.disable() }
