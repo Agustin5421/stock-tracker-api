@@ -23,7 +23,8 @@ export const config: Options.Testrunner = {
     'appium:app': path.join(__dirname, '..', '..', 'web', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk'),
     'appium:newCommandTimeout': 240,
     'appium:autoGrantPermissions': true,
-    'appium:chromedriverAutodownload': true
+    'appium:chromedriverAutodownload': true,
+    'appium:fullReset': true
   }],
   logLevel: 'info',
   bail: 0,

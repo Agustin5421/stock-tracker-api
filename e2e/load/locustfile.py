@@ -48,3 +48,19 @@ class UsuarioInversor(HttpUser):
     @task(4)
     def consultar_filings_recientes(self):
         self.client.get("/api/companies/320193/filings", name="Filings recientes")
+
+    @task(2)
+    def gestionar_watchlist(self):
+        if not hasattr(self, "headers") or not self.headers:
+            return
+        # Agregar AAPL a la watchlist
+        self.client.post(
+            "/api/watchlist",
+            json={"ticker": "AAPL", "name": "Apple Inc.", "cik": "0000320193"},
+            headers=self.headers,
+            name="Agregar a Watchlist"
+        )
+        # Consultar la watchlist
+        self.client.get("/api/watchlist", headers=self.headers, name="Consultar Watchlist")
+        # Eliminar AAPL de la watchlist
+        self.client.delete("/api/watchlist/AAPL", headers=self.headers, name="Eliminar de Watchlist")

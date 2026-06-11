@@ -283,6 +283,68 @@ export async function getOperationHistory(): Promise<OperationHistoryItem[]> {
   return body as OperationHistoryItem[]
 }
 
+// ---- Watchlist ----
+
+export interface WatchlistItemResponse {
+  ticker: string
+  name: string
+  cik: string
+}
+
+export async function addToWatchlist(
+  ticker: string,
+  name: string,
+  cik: string,
+): Promise<WatchlistItemResponse> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/watchlist`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ ticker, name, cik }),
+  })
+  if (res.status === 401) handleUnauthorized()
+  const body = await res.json().catch(() => null)
+  if (!res.ok) {
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+  return body as WatchlistItemResponse
+}
+
+export async function removeFromWatchlist(ticker: string): Promise<void> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/watchlist/${encodeURIComponent(ticker)}`, {
+    method: 'DELETE',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (res.status === 401) handleUnauthorized()
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+}
+
+export async function getWatchlist(): Promise<WatchlistItemResponse[]> {
+  const token = getToken()
+  const res = await fetch(`${API_BASE_URL}/api/watchlist`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (res.status === 401) handleUnauthorized()
+  const body = await res.json().catch(() => null)
+  if (!res.ok) {
+    throw new Error((body as ApiError)?.error ?? `HTTP ${res.status}: ${res.statusText}`)
+  }
+  return body as WatchlistItemResponse[]
+}
+
 // ---- Token helpers ----
 
 const TOKEN_KEY = 'pt_token'
