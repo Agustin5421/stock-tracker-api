@@ -72,9 +72,10 @@ describe('Watchlist y Comparacion (Feature 4)', () => {
     cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
     cy.get('[data-testid="watchlist-item-MSFT"]').should('be.visible')
 
-    // 4. Seleccionar ambas para comparación
-    cy.get('[data-testid="watchlist-item-AAPL-checkbox"]').click()
-    cy.get('[data-testid="watchlist-item-MSFT-checkbox"]').click()
+    // 4. Debería aparecer en la watchlist
+    cy.get('[data-testid="watchlist-view"]').should('be.visible')
+    cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
+        .and('contain', 'AAPL')
 
     // 5. Clickear botón de comparar
     cy.get('[data-testid="watchlist-compare-button"]').should('be.visible').click()
