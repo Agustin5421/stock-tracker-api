@@ -10,7 +10,6 @@ import java.util.UUID
 class JpaWatchlistRepository(
     private val springDataRepository: SpringDataWatchlistRepository,
 ) : WatchlistRepository {
-
     @Transactional
     override fun save(item: WatchlistItem): WatchlistItem {
         val entity = WatchlistItemEntity.fromDomain(item)
@@ -18,15 +17,17 @@ class JpaWatchlistRepository(
     }
 
     @Transactional
-    override fun delete(userId: UUID, ticker: String) {
+    override fun delete(
+        userId: UUID,
+        ticker: String,
+    ) {
         springDataRepository.deleteByUserIdAndTicker(userId, ticker)
     }
 
-    override fun findByUserId(userId: UUID): List<WatchlistItem> {
-        return springDataRepository.findByUserId(userId).map { it.toDomain() }
-    }
+    override fun findByUserId(userId: UUID): List<WatchlistItem> = springDataRepository.findByUserId(userId).map { it.toDomain() }
 
-    override fun existsByUserIdAndTicker(userId: UUID, ticker: String): Boolean {
-        return springDataRepository.existsByUserIdAndTicker(userId, ticker)
-    }
+    override fun existsByUserIdAndTicker(
+        userId: UUID,
+        ticker: String,
+    ): Boolean = springDataRepository.existsByUserIdAndTicker(userId, ticker)
 }

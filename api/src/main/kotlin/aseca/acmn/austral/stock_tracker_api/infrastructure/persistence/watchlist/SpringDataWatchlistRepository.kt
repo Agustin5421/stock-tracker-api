@@ -5,6 +5,14 @@ import java.util.UUID
 
 interface SpringDataWatchlistRepository : JpaRepository<WatchlistItemEntity, UUID> {
     fun findByUserId(userId: UUID): List<WatchlistItemEntity>
-    fun existsByUserIdAndTicker(userId: UUID, ticker: String): Boolean
-    fun deleteByUserIdAndTicker(userId: UUID, ticker: String)
+
+    fun existsByUserIdAndTicker(
+        userId: UUID,
+        ticker: String,
+    ): Boolean
+
+    fun deleteByUserIdAndTicker(
+        userId: UUID,
+        ticker: String,
+    )
 }

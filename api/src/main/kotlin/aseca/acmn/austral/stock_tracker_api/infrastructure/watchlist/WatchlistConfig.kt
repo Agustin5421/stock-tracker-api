@@ -12,19 +12,14 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class WatchlistConfig {
+    @Bean
+    fun addCompanyToWatchlistUseCase(watchlistRepository: WatchlistRepository): AddCompanyToWatchlistUseCase =
+        AddCompanyToWatchlistService(watchlistRepository)
 
     @Bean
-    fun addCompanyToWatchlistUseCase(
-        watchlistRepository: WatchlistRepository
-    ): AddCompanyToWatchlistUseCase = AddCompanyToWatchlistService(watchlistRepository)
+    fun removeCompanyFromWatchlistUseCase(watchlistRepository: WatchlistRepository): RemoveCompanyFromWatchlistUseCase =
+        RemoveCompanyFromWatchlistService(watchlistRepository)
 
     @Bean
-    fun removeCompanyFromWatchlistUseCase(
-        watchlistRepository: WatchlistRepository
-    ): RemoveCompanyFromWatchlistUseCase = RemoveCompanyFromWatchlistService(watchlistRepository)
-
-    @Bean
-    fun getWatchlistUseCase(
-        watchlistRepository: WatchlistRepository
-    ): GetWatchlistUseCase = GetWatchlistService(watchlistRepository)
+    fun getWatchlistUseCase(watchlistRepository: WatchlistRepository): GetWatchlistUseCase = GetWatchlistService(watchlistRepository)
 }

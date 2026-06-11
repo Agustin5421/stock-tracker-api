@@ -16,27 +16,24 @@ class WatchlistItemEntity(
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "id", length = 36, nullable = false, updatable = false)
     val id: UUID,
-    
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "user_id", length = 36, nullable = false)
     val userId: UUID,
-    
     @Column(name = "ticker", nullable = false, length = 10)
     val ticker: String,
-    
     @Column(name = "name", nullable = false, length = 255)
     val name: String,
-    
     @Column(name = "cik", nullable = false, length = 20)
     val cik: String,
 ) {
-    fun toDomain(): WatchlistItem = WatchlistItem(
-        id = id,
-        userId = userId,
-        ticker = ticker,
-        name = name,
-        cik = cik
-    )
+    fun toDomain(): WatchlistItem =
+        WatchlistItem(
+            id = id,
+            userId = userId,
+            ticker = ticker,
+            name = name,
+            cik = cik,
+        )
 
     companion object {
         fun fromDomain(item: WatchlistItem): WatchlistItemEntity =
@@ -45,7 +42,7 @@ class WatchlistItemEntity(
                 userId = item.userId,
                 ticker = item.ticker,
                 name = item.name,
-                cik = item.cik
+                cik = item.cik,
             )
     }
 }

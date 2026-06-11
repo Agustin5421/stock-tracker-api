@@ -28,14 +28,15 @@ class WatchlistController(
         @AuthenticationPrincipal principal: AuthenticatedUser,
         @RequestBody @Valid request: AddWatchlistRequest,
     ): ResponseEntity<WatchlistItemResponse> {
-        val item = addCompanyToWatchlistUseCase.add(
-            userId = principal.id,
-            ticker = request.ticker,
-            name = request.name,
-            cik = request.cik
-        )
+        val item =
+            addCompanyToWatchlistUseCase.add(
+                userId = principal.id,
+                ticker = request.ticker,
+                name = request.name,
+                cik = request.cik,
+            )
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            WatchlistItemResponse(item.ticker, item.name, item.cik)
+            WatchlistItemResponse(item.ticker, item.name, item.cik),
         )
     }
 
@@ -43,9 +44,10 @@ class WatchlistController(
     fun getWatchlist(
         @AuthenticationPrincipal principal: AuthenticatedUser,
     ): ResponseEntity<List<WatchlistItemResponse>> {
-        val list = getWatchlistUseCase.getWatchlist(principal.id).map {
-            WatchlistItemResponse(it.ticker, it.name, it.cik)
-        }
+        val list =
+            getWatchlistUseCase.getWatchlist(principal.id).map {
+                WatchlistItemResponse(it.ticker, it.name, it.cik)
+            }
         return ResponseEntity.ok(list)
     }
 

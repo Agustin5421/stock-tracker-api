@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 class WatchlistIntegrationTest {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -48,19 +47,19 @@ class WatchlistIntegrationTest {
     fun watchlistWithoutTokenReturns401() {
         mockMvc
             .perform(
-                get("/api/watchlist")
+                get("/api/watchlist"),
             ).andExpect(status().isUnauthorized)
 
         mockMvc
             .perform(
                 post("/api/watchlist")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isUnauthorized)
 
         mockMvc
             .perform(
-                delete("/api/watchlist/AAPL")
+                delete("/api/watchlist/AAPL"),
             ).andExpect(status().isUnauthorized)
     }
 
@@ -72,7 +71,7 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isCreated)
             .andExpect(jsonPath("$.ticker").value("AAPL"))
             .andExpect(jsonPath("$.name").value("Apple Inc."))
@@ -87,7 +86,7 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isCreated)
 
         // Try duplicate
@@ -96,7 +95,7 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isBadRequest)
     }
 
@@ -108,7 +107,7 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isCreated)
 
         mockMvc
@@ -116,13 +115,13 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"MSFT","name":"Microsoft","cik":"0000789019"}""")
+                    .content("""{"ticker":"MSFT","name":"Microsoft","cik":"0000789019"}"""),
             ).andExpect(status().isCreated)
 
         mockMvc
             .perform(
                 get("/api/watchlist")
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer $token"),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].ticker").value("AAPL"))
@@ -135,7 +134,7 @@ class WatchlistIntegrationTest {
         mockMvc
             .perform(
                 get("/api/watchlist")
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer $token"),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(0))
     }
@@ -150,7 +149,7 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token1")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isCreated)
 
         mockMvc
@@ -158,14 +157,14 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token2")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"MSFT","name":"Microsoft","cik":"0000789019"}""")
+                    .content("""{"ticker":"MSFT","name":"Microsoft","cik":"0000789019"}"""),
             ).andExpect(status().isCreated)
 
         // User 1 only gets AAPL
         mockMvc
             .perform(
                 get("/api/watchlist")
-                    .header("Authorization", "Bearer $token1")
+                    .header("Authorization", "Bearer $token1"),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(1))
             .andExpect(jsonPath("$[0].ticker").value("AAPL"))
@@ -174,7 +173,7 @@ class WatchlistIntegrationTest {
         mockMvc
             .perform(
                 get("/api/watchlist")
-                    .header("Authorization", "Bearer $token2")
+                    .header("Authorization", "Bearer $token2"),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(1))
             .andExpect(jsonPath("$[0].ticker").value("MSFT"))
@@ -188,20 +187,20 @@ class WatchlistIntegrationTest {
                 post("/api/watchlist")
                     .header("Authorization", "Bearer $token")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}""")
+                    .content("""{"ticker":"AAPL","name":"Apple Inc.","cik":"0000320193"}"""),
             ).andExpect(status().isCreated)
 
         mockMvc
             .perform(
                 delete("/api/watchlist/AAPL")
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer $token"),
             ).andExpect(status().isOk)
 
         // Verifying it was removed
         mockMvc
             .perform(
                 get("/api/watchlist")
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer $token"),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(0))
     }
