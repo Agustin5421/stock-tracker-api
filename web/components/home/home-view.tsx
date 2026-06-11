@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { LogOut, TrendingUp } from 'lucide-react'
 
@@ -15,13 +15,29 @@ import { SellStockForm } from '@/components/portfolio/sell-stock-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { type CompanySearchResult, clearToken } from '@/lib/api'
+import { WatchlistToggle } from '@/components/watchlist/watchlist-toggle'
+import { WatchlistView } from '@/components/watchlist/watchlist-view'
+import { WatchlistComparison } from '@/components/watchlist/watchlist-comparison'
+import { type CompanySearchResult, clearToken, getWatchlist, type WatchlistItemResponse } from '@/lib/api'
 import { navigate } from '@/lib/routing'
 
 export function HomeView() {
   const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null)
   // Bumped after a successful purchase so the portfolio re-fetches.
   const [portfolioRefresh, setPortfolioRefresh] = useState(0)
+
+  // Watchlist states
+  const [watchlistItems, setWatchlistItems] = useState<WatchlistItemResponse[]>([])
+  const [watchlistRefresh, setWatchlistRefresh] = useState(0)
+  const [comparisonCiks, setComparisonCiks] = useState<string[]>([])
+
+  useEffect(() => {
+    getWatchlist()
+      .then(setWatchlistItems)
+      .catch((err) => {
+        console.error('Error cargando watchlist:', err)
+      })
+  }, [watchlistRefresh])
 
   function handleLogout() {
     clearToken()
@@ -109,6 +125,28 @@ export function HomeView() {
           </CardContent>
         </Card>
 
+        {/* Watchlist */}
+        <Card className="border-l-4 border-l-[#d4e64d]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-foreground">Mi Watchlist</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <WatchlistView
+              items={watchlistItems}
+              onRefresh={() => setWatchlistRefresh((n) => n + 1)}
+              onCompare={(ciks) => setComparisonCiks(ciks)}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Watchlist Comparison */}
+        {comparisonCiks.length > 0 && (
+          <WatchlistComparison
+            ciks={comparisonCiks}
+            watchlistItems={watchlistItems}
+          />
+        )}
+
         {/* Dashboard widgets — asymmetric 30/70 split on large screens */}
         <div className="grid gap-6 lg:grid-cols-[30%_1fr]">
           {/* Left column: company search (~30%) */}
@@ -126,11 +164,20 @@ export function HomeView() {
           {/* Right column: detail panel (~70%) — only visible when a company is selected */}
           {selectedCompany && (
             <div className="flex flex-col gap-3">
-              <p className="text-xs text-muted-foreground px-1">
-                <span className="font-semibold text-foreground">{selectedCompany.ticker}</span>
-                {' — '}
-                {selectedCompany.name}
-              </p>
+              <div className="flex items-center justify-between px-1">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">{selectedCompany.ticker}</span>
+                  {' — '}
+                  {selectedCompany.name}
+                </p>
+                <WatchlistToggle
+                  ticker={selectedCompany.ticker}
+                  name={selectedCompany.name}
+                  cik={selectedCompany.cik}
+                  isSaved={watchlistItems.some((item) => item.cik === selectedCompany.cik)}
+                  onChanged={() => setWatchlistRefresh((n) => n + 1)}
+                />
+              </div>
 
               <Tabs defaultValue="metrics" className="w-full">
                 <TabsList>
