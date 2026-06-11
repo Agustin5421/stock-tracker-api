@@ -18,7 +18,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WatchlistToggle } from '@/components/watchlist/watchlist-toggle'
 import { WatchlistView } from '@/components/watchlist/watchlist-view'
 import { WatchlistComparison } from '@/components/watchlist/watchlist-comparison'
-import { type CompanySearchResult, clearToken, getWatchlist, type WatchlistItemResponse } from '@/lib/api'
+import {
+  type CompanySearchResult,
+  clearToken,
+  getWatchlist,
+  type WatchlistItemResponse,
+} from '@/lib/api'
 import { navigate } from '@/lib/routing'
 
 export function HomeView() {
@@ -141,10 +146,7 @@ export function HomeView() {
 
         {/* Watchlist Comparison */}
         {comparisonCiks.length > 0 && (
-          <WatchlistComparison
-            ciks={comparisonCiks}
-            watchlistItems={watchlistItems}
-          />
+          <WatchlistComparison ciks={comparisonCiks} watchlistItems={watchlistItems} />
         )}
 
         {/* Dashboard widgets — asymmetric 30/70 split on large screens */}

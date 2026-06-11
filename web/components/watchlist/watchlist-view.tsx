@@ -26,9 +26,7 @@ export function WatchlistView({ items, onRefresh, onCompare }: WatchlistViewProp
   const [removingTicker, setRemovingTicker] = useState<string | null>(null)
 
   function handleSelect(cik: string, checked: boolean) {
-    setSelectedCiks((prev) =>
-      checked ? [...prev, cik] : prev.filter((id) => id !== cik)
-    )
+    setSelectedCiks((prev) => (checked ? [...prev, cik] : prev.filter((id) => id !== cik)))
   }
 
   async function handleRemove(ticker: string) {
@@ -60,7 +58,8 @@ export function WatchlistView({ items, onRefresh, onCompare }: WatchlistViewProp
           className="flex flex-col items-center justify-center py-8 text-center"
         >
           <p className="text-sm text-muted-foreground">
-            No tienes empresas en seguimiento. Busca una empresa y haz clic en la estrella para agregarla.
+            No tienes empresas en seguimiento. Busca una empresa y haz clic en la estrella para
+            agregarla.
           </p>
         </div>
       ) : (
@@ -88,9 +87,7 @@ export function WatchlistView({ items, onRefresh, onCompare }: WatchlistViewProp
                         <Checkbox
                           id={`select-${item.ticker}`}
                           checked={isChecked}
-                          onCheckedChange={(checked) =>
-                            handleSelect(item.cik, !!checked)
-                          }
+                          onCheckedChange={(checked) => handleSelect(item.cik, !!checked)}
                           data-testid={`watchlist-item-${item.ticker}-checkbox`}
                           aria-label={`Seleccionar ${item.ticker} para comparar`}
                         />
