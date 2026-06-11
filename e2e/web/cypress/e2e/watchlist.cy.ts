@@ -3,7 +3,6 @@ describe('Watchlist y Comparacion (Feature 4)', () => {
     const email = `watchlist_cy_${Date.now()}@example.com`
     const password = 'Password123!'
 
-    // Register user via API for fast testing
     cy.request('POST', `${Cypress.env('apiUrl')}/auth/register`, { email, password })
     cy.visit('/#/login')
     cy.wait(500)
@@ -16,68 +15,75 @@ describe('Watchlist y Comparacion (Feature 4)', () => {
   it('US-021: Deberia mostrar un mensaje informando si la watchlist esta vacia', () => {
     cy.get('[data-testid="watchlist-view"]').should('be.visible')
     cy.get('[data-testid="watchlist-empty-message"]').should('be.visible')
-      .and('contain', 'No tienes empresas en seguimiento')
+        .and('contain', 'No tienes empresas en seguimiento')
   })
 
   it('US-019 / US-020: Deberia agregar y eliminar una empresa de la watchlist', () => {
+    cy.intercept('GET', '**/watchlist**').as('getWatchlist')
+
     // 1. Buscar AAPL
     cy.get('[data-testid="company-search-input"]').type('AAPL')
     cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).should('be.visible')
-    
-    // 2. Agregar desde el resultado o detalle. Hacemos click en Apple
+
+    // 2. Click en Apple
     cy.get('[data-testid="company-result-320193"]').click()
-    
-    // 3. Debería ver el botón de toggle watchlist y clickearlo
+
+    // 3. Clickear toggle watchlist y esperar re-fetch
     cy.get('[data-testid="watchlist-toggle"]').should('be.visible').click()
-    
+    cy.wait('@getWatchlist')
+
     // 4. Debería aparecer en la watchlist
     cy.get('[data-testid="watchlist-view"]').should('be.visible')
     cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
-      .and('contain', 'AAPL')
-      .and('contain', 'Apple Inc.')
-      
-    // 5. El botón de toggle debería cambiar de estado (p. ej. marcarse como guardado)
+        .and('contain', 'AAPL')
+        .and('contain', 'Apple Inc.')
+
+    // 5. El botón de toggle debería estar marcado como guardado
     cy.get('[data-testid="watchlist-toggle"]').should('have.attr', 'data-saved', 'true')
-    
-    // 6. Eliminarla desde el botón de la watchlist
+
+    // 6. Eliminarla y esperar re-fetch
     cy.get('[data-testid="watchlist-item-AAPL-remove"]').click()
-    
+    cy.wait('@getWatchlist')
+
     // 7. Ya no debería aparecer en la watchlist
     cy.get('[data-testid="watchlist-item-AAPL"]').should('not.exist')
     cy.get('[data-testid="watchlist-empty-message"]').should('be.visible')
   })
 
   it('US-022: Deberia permitir seleccionar varias empresas y comparar sus metricas', () => {
+    cy.intercept('GET', '**/watchlist**').as('getWatchlist')
+
     // 1. Agregar AAPL
     cy.get('[data-testid="company-search-input"]').type('AAPL')
     cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).click()
     cy.get('[data-testid="watchlist-toggle"]').click()
-    
+    cy.wait('@getWatchlist')
+
     // Limpiar busqueda para buscar otra
     cy.get('[data-testid="company-search-input"]').clear()
-    
-    // 2. Agregar MSFT (CIK 789019)
+
+    // 2. Agregar MSFT
     cy.get('[data-testid="company-search-input"]').type('MSFT')
     cy.get('[data-testid="company-result-789019"]', { timeout: 10000 }).click()
     cy.get('[data-testid="watchlist-toggle"]').click()
-    
+    cy.wait('@getWatchlist')
+
     // 3. Ver que ambas están en la watchlist
     cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
     cy.get('[data-testid="watchlist-item-MSFT"]').should('be.visible')
-    
+
     // 4. Seleccionar ambas para comparación
     cy.get('[data-testid="watchlist-item-AAPL-checkbox"]').click()
     cy.get('[data-testid="watchlist-item-MSFT-checkbox"]').click()
-    
+
     // 5. Clickear botón de comparar
     cy.get('[data-testid="watchlist-compare-button"]').should('be.visible').click()
-    
-    // 6. Validar que la tabla comparativa aparece con las columnas de ambas empresas
+
+    // 6. Validar tabla comparativa
     cy.get('[data-testid="watchlist-comparison-panel"]', { timeout: 15000 }).should('be.visible')
     cy.get('[data-testid="comparison-header-AAPL"]').should('be.visible')
     cy.get('[data-testid="comparison-header-MSFT"]').should('be.visible')
-    
-    // Validar que se muestran métricas clave (p. ej. Ingresos y Utilidad Neta)
+
     cy.get('[data-testid="comparison-row-revenue"]').should('be.visible')
     cy.get('[data-testid="comparison-row-netIncome"]').should('be.visible')
   })
