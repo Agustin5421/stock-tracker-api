@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class RemoveCompanyFromWatchlistServiceTest {
-
     private val repository = InMemoryWatchlistRepository()
     private val addService = AddCompanyToWatchlistService(repository)
     private val removeService = RemoveCompanyFromWatchlistService(repository)
@@ -16,13 +15,15 @@ class RemoveCompanyFromWatchlistServiceTest {
     @Test
     fun `remove succeeds for an existing watchlist item`() {
         val userId = UUID.randomUUID()
-        repository.save(aseca.acmn.austral.stock_tracker_api.domain.watchlist.WatchlistItem(
-            id = UUID.randomUUID(),
-            userId = userId,
-            ticker = "AAPL",
-            name = "Apple Inc.",
-            cik = "0000320193"
-        ))
+        repository.save(
+            aseca.acmn.austral.stock_tracker_api.domain.watchlist.WatchlistItem(
+                id = UUID.randomUUID(),
+                userId = userId,
+                ticker = "AAPL",
+                name = "Apple Inc.",
+                cik = "0000320193",
+            ),
+        )
 
         assertTrue(repository.existsByUserIdAndTicker(userId, "AAPL"))
         removeService.remove(userId, "AAPL")

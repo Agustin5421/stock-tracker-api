@@ -9,7 +9,6 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 class AddCompanyToWatchlistServiceTest {
-
     private val repository = InMemoryWatchlistRepository()
     private val service = AddCompanyToWatchlistService(repository)
 

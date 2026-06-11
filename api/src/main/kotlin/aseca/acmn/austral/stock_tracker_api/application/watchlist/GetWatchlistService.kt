@@ -6,7 +6,5 @@ import java.util.UUID
 class GetWatchlistService(
     private val watchlistRepository: WatchlistRepository,
 ) : GetWatchlistUseCase {
-    override fun getWatchlist(userId: UUID): List<WatchlistItem> {
-        return watchlistRepository.findByUserId(userId)
-    }
+    override fun getWatchlist(userId: UUID): List<WatchlistItem> = watchlistRepository.findByUserId(userId)
 }

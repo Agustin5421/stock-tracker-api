@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class GetWatchlistServiceTest {
-
     private val repository = InMemoryWatchlistRepository()
     private val service = GetWatchlistService(repository)
 
