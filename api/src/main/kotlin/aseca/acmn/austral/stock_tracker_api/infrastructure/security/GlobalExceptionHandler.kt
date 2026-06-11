@@ -33,4 +33,8 @@ class GlobalExceptionHandler {
     @ExceptionHandler(InsufficientSharesException::class)
     fun handleInsufficientShares(e: InsufficientSharesException): ResponseEntity<Unit> =
         ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build()
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(e: IllegalArgumentException): ResponseEntity<Map<String, String?>> =
+        ResponseEntity.badRequest().body(mapOf("error" to e.message))
 }
