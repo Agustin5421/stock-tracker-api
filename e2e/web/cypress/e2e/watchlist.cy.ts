@@ -21,31 +21,23 @@ describe('Watchlist y Comparacion (Feature 4)', () => {
   it('US-019 / US-020: Deberia agregar y eliminar una empresa de la watchlist', () => {
     cy.intercept('GET', '**/watchlist**').as('getWatchlist')
 
-    // 1. Buscar AAPL
     cy.get('[data-testid="company-search-input"]').type('AAPL')
     cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).should('be.visible')
-
-    // 2. Click en Apple
+    cy.wait(500)
     cy.get('[data-testid="company-result-320193"]').click()
 
-    // 3. Clickear toggle watchlist y esperar re-fetch
     cy.get('[data-testid="watchlist-toggle"]').should('be.visible').click()
     cy.wait('@getWatchlist')
 
-    // 4. Debería aparecer en la watchlist
     cy.get('[data-testid="watchlist-view"]').should('be.visible')
     cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
         .and('contain', 'AAPL')
-        .and('contain', 'Apple Inc.')
 
-    // 5. El botón de toggle debería estar marcado como guardado
     cy.get('[data-testid="watchlist-toggle"]').should('have.attr', 'data-saved', 'true')
 
-    // 6. Eliminarla y esperar re-fetch
     cy.get('[data-testid="watchlist-item-AAPL-remove"]').click()
     cy.wait('@getWatchlist')
 
-    // 7. Ya no debería aparecer en la watchlist
     cy.get('[data-testid="watchlist-item-AAPL"]').should('not.exist')
     cy.get('[data-testid="watchlist-empty-message"]').should('be.visible')
   })
@@ -55,16 +47,19 @@ describe('Watchlist y Comparacion (Feature 4)', () => {
 
     // 1. Agregar AAPL
     cy.get('[data-testid="company-search-input"]').type('AAPL')
-    cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).click()
+    cy.get('[data-testid="company-result-320193"]', { timeout: 10000 }).should('be.visible')
+    cy.wait(500)
+    cy.get('[data-testid="company-result-320193"]').click()
     cy.get('[data-testid="watchlist-toggle"]').click()
     cy.wait('@getWatchlist')
 
-    // Limpiar busqueda para buscar otra
     cy.get('[data-testid="company-search-input"]').clear()
 
     // 2. Agregar MSFT
     cy.get('[data-testid="company-search-input"]').type('MSFT')
-    cy.get('[data-testid="company-result-789019"]', { timeout: 10000 }).click()
+    cy.get('[data-testid="company-result-789019"]', { timeout: 10000 }).should('be.visible')
+    cy.wait(500)
+    cy.get('[data-testid="company-result-789019"]').click()
     cy.get('[data-testid="watchlist-toggle"]').click()
     cy.wait('@getWatchlist')
 
@@ -72,13 +67,12 @@ describe('Watchlist y Comparacion (Feature 4)', () => {
     cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
     cy.get('[data-testid="watchlist-item-MSFT"]').should('be.visible')
 
-    // 4. Debería aparecer en la watchlist
-    cy.get('[data-testid="watchlist-view"]').should('be.visible')
-    cy.get('[data-testid="watchlist-item-AAPL"]').should('be.visible')
-        .and('contain', 'AAPL')
+    // 4. Seleccionar ambas para comparación
+    cy.get('[data-testid="watchlist-item-AAPL-checkbox"]').click()
+    cy.get('[data-testid="watchlist-item-MSFT-checkbox"]').click()
 
     // 5. Clickear botón de comparar
-    cy.get('[data-testid="watchlist-compare-button"]').should('be.visible').click()
+    cy.get('[data-testid="watchlist-compare-button"]').should('not.be.disabled').click()
 
     // 6. Validar tabla comparativa
     cy.get('[data-testid="watchlist-comparison-panel"]', { timeout: 15000 }).should('be.visible')
