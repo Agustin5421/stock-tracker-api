@@ -30,35 +30,25 @@ Each subdirectory has its own `CLAUDE.md` with commands, architecture, and conve
 
 ## Running the Stack
 
-**API** (from `api/`) — full stack in docker:
+**API** (from `api/`):
 ```bash
-docker compose up --build -d    # starts MySQL on 3307 and API on 8080
-```
-
-**API** (from `api/`) — db in docker, app on host:
-```bash
-docker compose up -d stock-tracker-db         # MySQL on 3307
-./gradlew bootRun               # API on 8080, connects to localhost:3307
+docker compose up --build    # MySQL on 3307, API on 8080
 ```
 
 **Web** (from `web/`):
 ```bash
-pnpm install                    # first time only (also wires up git hooks via `prepare`)
-pnpm dev                        # dev server at http://localhost:3000
+docker compose up --build       # static build served by nginx at http://localhost:3000
 ```
 
 **E2E tests — Cypress** (from `e2e/web/`, requires web + API running):
 ```bash
 npm install
 npm run cy:open                 # interactive Cypress GUI
-npm run cy:run                  # headless (Electron by default)
-npx cypress run --browser chrome --headless   # headless Chrome
 ```
 
 **Load tests — Locust** (from `e2e/load/`, requires API running):
 ```bash
-docker compose up               # UI at http://localhost:8089
-docker compose run --rm locust --headless -u 50 -r 5 -t 1m   # headless run
+docker compose up                    # Locust UI at http://localhost:8089
 ```
 
 ## Git Hooks & CI

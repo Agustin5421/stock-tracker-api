@@ -1,5 +1,5 @@
 services:
-  portfolio-tracker-locust:
+  stock-tracker-locust:
     image: locustio/locust:2.32.6
     ports:
       - "8089:8089"

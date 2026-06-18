@@ -4,6 +4,7 @@ e2e/load/output/
 # Python
 __pycache__/
 *.pyc
+.venv/
 
 # OS
 .DS_Store

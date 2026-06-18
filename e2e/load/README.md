@@ -4,13 +4,8 @@ Requires the API running on port 8080 before starting any test.
 
 ## Prerequisites — seed stock prices
 
-Buy and sell operations return 422 if the DB has no prices. Run this once from `batch/` before any test:
-
-```bash
-docker compose --env-file ../api/.env run --rm seed
-```
-
-This loads prices for all 14 tickers used in the test (AAPL, MSFT, AMZN, GOOGL, TSLA, META, NVDA, JPM, JNJ, V, WMT, KO, NFLX, INTC).
+Buy and sell operations return 422 if the DB has no prices.
+Yahoo Finance blocks Docker IPs, so the seed must run from the host. See `batch/README.md`.
 
 ---
 
