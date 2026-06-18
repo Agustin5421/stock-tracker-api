@@ -23,7 +23,11 @@ except ModuleNotFoundError:  # pragma: no cover
     from batch import update_prices
 
 # Top US large-caps by market cap — liquid defaults with reliable Yahoo data.
-TOP_TICKERS = ["AAPL", "MSFT", "GOOG", "AMZN", "NVDA"]
+TOP_TICKERS = [
+    "AAPL", "MSFT", "AMZN", "GOOGL", "TSLA",
+    "META", "NVDA", "JPM", "JNJ", "V",
+    "WMT", "KO", "NFLX", "INTC",
+]
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -31,23 +31,6 @@ services:
       stock-tracker-db:
         condition: service_healthy
 
-  batch:
-    image: python:3.12-slim
-    working_dir: /app
-    restart: "no"
-    volumes:
-      - ../batch:/app
-    environment:
-      DB_HOST: stock-tracker-db
-      DB_PORT: 3306
-      DB_NAME: ${MYSQL_DATABASE}
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-      OVERRIDE_TICKERS: ${OVERRIDE_TICKERS:-}
-    depends_on:
-      stock-tracker-db:
-        condition: service_healthy
-    command: sh -c "pip install -r requirements.txt && python3 update_prices.py"
 
 volumes:
   mysql_data:

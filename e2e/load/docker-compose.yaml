@@ -5,8 +5,13 @@ services:
       - "8089:8089"
     volumes:
       - ./:/mnt/locust
+      - ./output:/mnt/output
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: >
-      -f /mnt/locust/locustfile.py
-      --host http://host.docker.internal:8080
+    user: root
+    environment:
+      - TEST_TYPE=${TEST_TYPE:-load}
+      - LOCUST_LOCUSTFILE=/mnt/locust/locustfile.py
+      - LOCUST_HOST=http://host.docker.internal:8080
+      - LOCUST_USERS=50
+      - LOCUST_SPAWN_RATE=5
