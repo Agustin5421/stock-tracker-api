@@ -21,6 +21,8 @@ class EdgarClient(
     private val client: RestClient,
 ) : EdgarPort {
     private val tickerCache = AtomicReference<Map<Long, TickerEntry>?>(null)
+    private val companyFactsCache = java.util.concurrent.ConcurrentHashMap<String, Map<String, Map<String, ConceptEntry>>>()
+    private val filingsCache = java.util.concurrent.ConcurrentHashMap<String, List<Filing>>()
     private val requestTimestamps = ArrayDeque<Long>()
     private val lock = Any()
 
@@ -65,6 +67,7 @@ class EdgarClient(
     }
 
     override fun getRecentFilings(cik: String): List<Filing> {
+        filingsCache[cik]?.let { return it }
         val paddedCik = cik.padStart(10, '0')
         throttle()
         return try {
@@ -81,13 +84,16 @@ class EdgarClient(
             val forms = recent.form
             val dates = recent.filingDate
             val accessions = recent.accessionNumber
-            forms.indices.map { i ->
-                Filing(
-                    type = forms[i],
-                    filingDate = dates[i],
-                    accessionNumber = accessions[i],
-                )
-            }
+            val result =
+                forms.indices.map { i ->
+                    Filing(
+                        type = forms[i],
+                        filingDate = dates[i],
+                        accessionNumber = accessions[i],
+                    )
+                }
+            filingsCache[cik] = result
+            result
         } catch (e: CompanyNotFoundException) {
             throw e
         } catch (e: Exception) {
@@ -176,6 +182,7 @@ class EdgarClient(
     }
 
     private fun loadCompanyFacts(cik: String): Map<String, Map<String, ConceptEntry>> {
+        companyFactsCache[cik]?.let { return it }
         val paddedCik = cik.padStart(10, '0')
         throttle()
         return try {
@@ -188,7 +195,9 @@ class EdgarClient(
                     .onStatus(HttpStatusCode::is4xxClientError) { _, _ -> notFound = true }
                     .body(CompanyFactsResponse::class.java)
             if (notFound) throw CompanyNotFoundException(cik)
-            response?.facts ?: throw EdgarException("Empty response body for CIK $cik")
+            val result = response?.facts ?: throw EdgarException("Empty response body for CIK $cik")
+            companyFactsCache[cik] = result
+            result
         } catch (e: CompanyNotFoundException) {
             throw e
         } catch (e: Exception) {
