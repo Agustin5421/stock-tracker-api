@@ -84,13 +84,14 @@ class EdgarClient(
             val forms = recent.form
             val dates = recent.filingDate
             val accessions = recent.accessionNumber
-            val result = forms.indices.map { i ->
-                Filing(
-                    type = forms[i],
-                    filingDate = dates[i],
-                    accessionNumber = accessions[i],
-                )
-            }
+            val result =
+                forms.indices.map { i ->
+                    Filing(
+                        type = forms[i],
+                        filingDate = dates[i],
+                        accessionNumber = accessions[i],
+                    )
+                }
             filingsCache[cik] = result
             result
         } catch (e: CompanyNotFoundException) {
