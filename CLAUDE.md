@@ -37,7 +37,8 @@ docker compose up --build    # MySQL on 3307, API on 8080
 
 **Web** (from `web/`):
 ```bash
-docker compose up --build       # static build served by nginx at http://localhost:3000
+pnpm install
+pnpm dev       # static build served by nginx at http://localhost:3000
 ```
 
 **E2E tests — Cypress** (from `e2e/web/`, requires web + API running):
