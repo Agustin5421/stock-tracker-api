@@ -1,0 +1,7 @@
+services:
+  stock-tracker-api:
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
